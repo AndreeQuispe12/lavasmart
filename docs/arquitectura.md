@@ -49,7 +49,8 @@ Analítica por lotes y no en línea. Ningún resultado de los modelos se necesit
 | Capa | Tecnología | Por qué |
 | --- | --- | --- |
 | Lenguaje | TypeScript | Los errores de tipo aparecen al escribir y no en producción. Supabase genera los tipos del esquema, de modo que un nombre de columna mal escrito no compila. |
-| Aplicación web | Next.js con React | Framework de referencia para React, con renderizado en servidor y despliegue directo en Vercel sin configuración. |
+| Aplicación web | Next.js con React | Framework de referencia para React, con renderizado en servidor y despliegue directo en Vercel sin configuración. Se usa el App Router: la estructura de carpetas define las rutas. |
+| Estilos | Tailwind CSS | Clases de utilidad aplicadas directamente en el marcado. Se eligió porque los mockups del sistema están construidos con ese mismo enfoque, de modo que trasladarlos a código es casi directo. |
 | Alojamiento web | Vercel | Despliegue automático desde GitHub, HTTPS incluido y plan gratuito suficiente para el volumen del negocio. |
 | Base de datos | PostgreSQL 15+ | Motor relacional maduro, con tipos enumerados, restricciones expresivas, disparadores y seguridad a nivel de fila. |
 | Plataforma de datos | Supabase (São Paulo) | PostgreSQL gestionado con autenticación, API y respaldos. La región reduce la latencia frente a alojar en Norteamérica. |

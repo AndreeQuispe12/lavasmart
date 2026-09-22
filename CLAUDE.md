@@ -19,10 +19,10 @@ Responder y escribir comentarios **en español**.
 | Documentación | Terminada, en `docs/`. |
 | Mockups | 9 pantallas de escritorio, rol dueño. |
 | Proyecto en Supabase | **No creado todavía.** |
-| Aplicación web | **No existe todavía.** Falta andamiar. |
+| Aplicación web | **Andamiada.** Next.js con App Router, TypeScript y Tailwind; `@supabase/supabase-js` instalado. Sin pantallas todavía. |
 | Proceso de analítica | **No existe todavía.** Y no puede entrenarse: no hay histórico. |
 
-Lo primero que toca es crear el proyecto en Supabase, ejecutar el esquema y andamiar Next.js.
+Lo primero que toca es crear el proyecto en Supabase, ejecutar el esquema y conectar la aplicación.
 
 ---
 
@@ -31,6 +31,7 @@ Lo primero que toca es crear el proyecto en Supabase, ejecutar el esquema y anda
 | Capa | Tecnología |
 | --- | --- |
 | Aplicación | Next.js (App Router) + TypeScript + React |
+| Estilos | Tailwind CSS. Los mockups están hechos con ese enfoque, así que trasladarlos es casi directo. |
 | Datos | PostgreSQL 15+ gestionado en Supabase, región São Paulo |
 | Autenticación | Supabase Auth |
 | Despliegue | Vercel, conectado a la rama principal de GitHub |
@@ -46,8 +47,7 @@ minuto, lo que es inaceptable en un mostrador con un cliente esperando.
 ## Estructura
 
 ```
-web/    aplicación Next.js   (si todavía se llama app/, renombrarla:
-                              el App Router crea su propio app/ dentro)
+web/    aplicación Next.js   (dentro está su propio app/, que es el App Router)
 sql/    esquema y migraciones, numeradas por orden de ejecución
 ml/     proceso de analítica
 docs/   documentación técnica

@@ -26,6 +26,8 @@ Cubre la arquitectura, el stack, la capa de datos, la seguridad, la capa de anal
 
 El sistema se encuentra en desarrollo. Las secciones que describen componentes todavía no construidos lo indican de forma explícita; todo lo demás describe lo que ya existe y está verificado.
 
+Al momento de esta versión, el modelo de datos está terminado y verificado, y la aplicación web está andamiada con sus dependencias instaladas pero sin pantallas construidas. El proyecto en la nube todavía no se ha creado.
+
 ### Documentos relacionados
 
 | Documento | Qué contiene |
