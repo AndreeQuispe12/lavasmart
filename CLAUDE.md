@@ -18,11 +18,11 @@ Responder y escribir comentarios **en español**.
 | Modelo de datos | **Terminado y verificado.** `sql/01_esquema.sql` corre de una pasada sobre PostgreSQL 15+. Validado con 13 casos de prueba de comportamiento. |
 | Documentación | Terminada, en `docs/`. |
 | Mockups | 9 pantallas de escritorio, rol dueño. |
-| Proyecto en Supabase | **No creado todavía.** |
-| Aplicación web | **Andamiada.** Next.js con App Router, TypeScript y Tailwind; `@supabase/supabase-js` instalado. Sin pantallas todavía. |
+| Proyecto en Supabase | **Creado** en São Paulo. Aplicados `01_esquema` y `04_seguridad_advisor`; `02` y `03` no. Tarifas de ejemplo. Sin usuarios ni perfiles. |
+| Aplicación web | **Conectada a Supabase.** Next.js con App Router, TypeScript y Tailwind; clientes de navegador y servidor en `web/lib/supabase` con `@supabase/ssr`. Sin login ni pantallas todavía. |
 | Proceso de analítica | **No existe todavía.** Y no puede entrenarse: no hay histórico. |
 
-Lo primero que toca es crear el proyecto en Supabase, ejecutar el esquema y conectar la aplicación.
+Lo siguiente es el login con Supabase Auth y el primer perfil de dueño.
 
 ---
 

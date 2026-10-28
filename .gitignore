@@ -1,7 +1,12 @@
-# Entorno
+# Entorno: ningún archivo de variables entra, salvo la plantilla sin valores
 .env
-.env.local
-.env*.local
+.env.*
+!.env.example
+
+# Despliegue y CLI de Supabase: guardan el id del proyecto y tokens locales
+.vercel/
+supabase/.temp/
+supabase/.branches/
 
 # Node
 node_modules/
@@ -20,13 +25,23 @@ venv/
 ml/datos/*.csv
 !ml/datos/ejemplo.csv
 
-# Herramientas de IA: configuracion local de la maquina, no del proyecto
-.claude/
+# Herramientas de IA: instrucciones y configuración de los asistentes de código.
+# No forman parte del proyecto. Sin "/" inicial, valen en cualquier carpeta
+# (incluye web/CLAUDE.md y web/AGENTS.md, que regenera `next dev`).
+*claude*
+*CLAUDE*
+*Claude*
+!/CLAUDE.md
+AGENTS.md
+GEMINI.md
 .mcp.json
-CLAUDE.local.md
 .cursor/
+.cursorrules
 .windsurf/
- 
+.windsurfrules
+.aider*
+.github/copilot-instructions.md
+
 # Editor
 .vscode/
 .idea/
