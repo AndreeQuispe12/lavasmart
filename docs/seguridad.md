@@ -8,7 +8,9 @@ La autenticación la gestiona Supabase. El sistema no almacena contraseñas ni i
 
 Las quince tablas tienen activada la seguridad a nivel de fila antes de que se inserte el primer dato. El estado por defecto es el más restrictivo: sin una política que lo autorice explícitamente, ninguna consulta devuelve nada.
 
-Dos funciones auxiliares resuelven la identidad de quien consulta: una comprueba que el usuario tenga perfil en el negocio y la otra que además sea el dueño. Ambas se declaran de modo que una tabla suplantadora no pueda alterar su resultado.
+Dos funciones auxiliares resuelven la identidad de quien consulta: una comprueba que el usuario tenga perfil en el negocio y la otra que además sea el dueño. Ambas se declaran de modo que una tabla suplantadora no pueda alterar su resultado, y solo puede ejecutarlas un usuario autenticado: el rol anónimo no tiene permiso sobre ellas.
+
+Las dos vistas se ejecutan con los permisos de quien consulta y no con los de su creador, así que también pasan por las políticas de las tablas que suman. Las funciones de los disparadores tienen la ruta de búsqueda fija por la misma razón que las auxiliares.
 
 | Conjunto de tablas | Operador | Dueño |
 | --- | --- | --- |
