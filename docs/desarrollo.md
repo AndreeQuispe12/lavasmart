@@ -41,6 +41,10 @@ lavasmart/
 
 Las variables cuyo nombre empieza por NEXT_PUBLIC quedan incrustadas en el código que se descarga al navegador. Ese prefijo no debe aparecer nunca delante de un secreto.
 
+La aplicación vive en web/, y Next.js solo lee los archivos de entorno de su propia carpeta. Por eso la copia local de la plantilla va en web/.env.local y no en la raíz: un archivo de entorno en la raíz la aplicación no lo ve. En la variable de la clave publicable se usa la clave moderna de Supabase, la que empieza por sb_publishable; la antigua clave anon también funciona, pero la nueva se puede rotar sin tocar las demás.
+
+La aplicación habla con Supabase a través de dos clientes, en web/lib/supabase: uno para el navegador y otro para el servidor, que lee la sesión desde las cookies de cada petición. Ambos usan solo las dos variables públicas.
+
 ### Puesta en marcha
 
 El orden importa, porque la aplicación no puede levantarse contra una base de datos que todavía no existe.
@@ -48,7 +52,7 @@ El orden importa, porque la aplicación no puede levantarse contra una base de d
 - Crear el proyecto en Supabase, en la región de São Paulo, y guardar sus credenciales.
 - Ejecutar los archivos de sql/ en orden numérico desde el editor SQL de Supabase.
 - Reemplazar las tarifas de ejemplo por las tarifas reales del negocio.
-- Copiar .env.example a .env.local y completar los valores.
+- Copiar .env.example a web/.env.local y completar las dos variables públicas.
 - Instalar las dependencias y levantar la aplicación en modo desarrollo.
 - Crear el primer usuario desde el panel de Supabase y asignarle el rol de dueño en la tabla de perfiles, porque sin perfil ninguna política de seguridad lo deja ver nada.
 
