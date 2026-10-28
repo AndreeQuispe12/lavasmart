@@ -8,6 +8,7 @@ Cada uno solo referencia objetos de los anteriores.
 | `01_esquema.sql` | Crea los 9 tipos enumerados, las 15 tablas, las 2 vistas, los 4 disparadores, los 13 índices y las políticas de seguridad. Carga los catálogos mínimos. |
 | `02_tarifas.sql` | Reemplaza las tarifas de ejemplo por las reales de AquaBrillo. |
 | `03_datos_prueba.sql` | Datos de desarrollo: lavadores, placas inventadas y una semana de lavados. **No ejecutar en producción.** |
+| `04_seguridad_advisor.sql` | Corrige el Security Advisor: vistas con `security_invoker`, `search_path` fijo en los disparadores y `fn_es_dueno`/`fn_es_personal` fuera del alcance de `anon`. Solo depende de `01`. Ya aplicado en el proyecto actual. |
 | `pruebas/casos.sql` | 13 casos que comprueban que las reglas del negocio se cumplen. |
 
 ## Reglas
