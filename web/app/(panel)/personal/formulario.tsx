@@ -39,7 +39,7 @@ export function FormularioTrabajador({
       key={estado.version}
       action={enviar}
       className={`flex flex-col gap-4 rounded-lg border p-4 ${
-        editar ? "border-sky-400" : "border-zinc-500/20"
+        editar ? "border-acento" : "border-zinc-500/20"
       }`}
     >
       <h2 className="text-lg font-semibold">
@@ -69,7 +69,7 @@ export function FormularioTrabajador({
         <button
           type="submit"
           disabled={enviando}
-          className="rounded-lg bg-sky-700 px-5 py-3 font-semibold text-white hover:bg-sky-800 disabled:opacity-60"
+          className="rounded-lg bg-acento px-5 py-3 font-semibold text-white hover:bg-acento-oscuro disabled:opacity-60"
         >
           {enviando ? "Guardando..." : editar ? "Guardar cambios" : "Agregar"}
         </button>

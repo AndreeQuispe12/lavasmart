@@ -1,26 +1,23 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/* Identidad visual de LavaSmart: la misma paleta del prototipo validado
+   con el dueño (Downloads/lavasmart/app.py). Cada color es un token de
+   Tailwind: bg-marca, text-acento, border-celeste, etc. */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-marca: #0b2545; /* azul noche: barra lateral y encabezados */
+  --color-marca-2: #13315c; /* segundo tono del degradado */
+  --color-acento: #0891b2; /* turquesa: botones y enlaces */
+  --color-acento-oscuro: #0e7490;
+  --color-celeste: #22d3ee; /* resalte de la opción activa */
+  --color-fondo: #f3f8fb;
+  --color-background: var(--color-fondo);
+  --color-foreground: #0f172a;
+  --font-sans: var(--font-inter);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* Un solo tema claro, como el prototipo: se usa en el mostrador, de día. */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(180deg, #eef6fa 0%, var(--color-fondo) 320px);
+  color: var(--color-foreground);
+  font-family: var(--font-inter), system-ui, sans-serif;
 }

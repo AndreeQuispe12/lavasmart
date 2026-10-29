@@ -121,7 +121,7 @@ export default async function PaginaTablero({
                 </span>
                 <div className="h-5 flex-1 rounded bg-zinc-500/10">
                   <div
-                    className="h-5 rounded bg-sky-600"
+                    className="h-5 rounded bg-acento"
                     style={{ width: `${(d.cobrado / maxCobrado) * 100}%` }}
                   />
                 </div>

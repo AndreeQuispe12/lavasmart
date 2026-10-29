@@ -33,7 +33,7 @@ export function BotonesAsistencia({
           <button
             type="submit"
             disabled={ocupado}
-            className="rounded-lg bg-sky-700 px-4 py-2 font-semibold text-white hover:bg-sky-800 disabled:opacity-60"
+            className="rounded-lg bg-acento px-4 py-2 font-semibold text-white hover:bg-acento-oscuro disabled:opacity-60"
           >
             {marcandoEntrada
               ? "Marcando..."
