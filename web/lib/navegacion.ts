@@ -50,7 +50,7 @@ const SECCIONES: Seccion[] = [
     soloDueno: true,
     disponible: true,
   },
-  { ruta: "/tablero", etiqueta: "Tablero", soloDueno: true, disponible: false },
+  { ruta: "/tablero", etiqueta: "Tablero", soloDueno: true, disponible: true },
 ];
 
 export function seccionesPara(rol: Rol): Seccion[] {

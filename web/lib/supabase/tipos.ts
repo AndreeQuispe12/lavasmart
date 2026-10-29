@@ -792,6 +792,23 @@ export type Database = {
         }
         Returns: number
       }
+      fn_servicios_mas_pedidos: {
+        Args: { p_desde: string }
+        Returns: {
+          cantidad: number
+          monto: number
+          servicio: string
+        }[]
+      }
+      fn_tablero_resumen: {
+        Args: { p_desde: string }
+        Returns: {
+          autos_con_saldo: number
+          por_pagar: number
+          saldo_no_cobrado: number
+          trabajadores_por_pagar: number
+        }[]
+      }
     }
     Enums: {
       estado_asistencia: "puntual" | "tardanza" | "no_laboro" | "falta"

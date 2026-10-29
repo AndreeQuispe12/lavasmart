@@ -21,6 +21,13 @@ export function horaEnLima(): string {
   }).format(new Date());
 }
 
+// "2026-10-29" más n días (n puede ser negativo) -> "AAAA-MM-DD". Se
+// calcula en UTC sobre la fecha sola, sin hora, para no correrse de día.
+export function sumarDias(fecha: string, n: number): string {
+  const [anio, mes, dia] = fecha.split("-").map(Number);
+  return new Date(Date.UTC(anio, mes - 1, dia + n)).toISOString().slice(0, 10);
+}
+
 // El día "AAAA-MM-DD" de Lima como rango de instantes, para filtrar una
 // columna timestamptz: [00:00 de ese día, 00:00 del siguiente). Perú no
 // cambia de hora en el año, así que el desfase es siempre -05:00.

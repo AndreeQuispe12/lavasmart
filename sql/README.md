@@ -18,6 +18,7 @@ Cada uno solo referencia objetos de los anteriores.
 | `11_entrega_del_pago.sql` | Vista `v_por_pagar` (días cerrados sin pagar y su suma, por trabajador) y `fn_entregar_pago`, que marca pagado todo lo pendiente de un trabajador hasta un día, con la fecha de hoy en Lima. Solo el dueño; un pago registrado no se deshace. |
 | `12_configuracion_valida.sql` | Disparadores: cada parámetro de `configuracion` con su formato (hora HH:MM, tolerancia 0 a 120, porcentajes 0 a 100), moneda y zona horaria fijas, ninguna clave nueva desde la aplicación; y `actualizado_en` de `tarifa` y `configuracion` con el reloj de la base al cambiar. |
 | `13_cambio_de_modalidad.sql` | Disparador en `trabajador`: la modalidad y el sueldo diario solo cambian si no tiene autos en piso ni días con actividad sin liquidación cerrada, para que ningún día se pague con dos reglas. Nombre, documento y frecuencia cambian siempre. |
+| `14_tablero.sql` | Funciones de solo lectura para el tablero: `fn_tablero_resumen` (lo no cobrado por pagos incompletos de autos entregados, y lo que se le debe al personal) y `fn_servicios_mas_pedidos` (cantidad y monto por servicio, con el precio congelado). |
 | `pruebas/casos.sql` | 13 casos que comprueban que las reglas del negocio se cumplen. |
 
 ## Reglas

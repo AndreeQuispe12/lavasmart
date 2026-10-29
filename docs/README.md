@@ -84,6 +84,8 @@ La entrega del dinero también está implementada. Arriba de la liquidación se 
 
 Las tarifas y la configuración están implementadas. El dueño edita el tarifario como en el cuaderno, con los servicios en filas y los tipos de vehículo en columnas, y las reglas de asistencia: la hora de entrada, la tolerancia y los dos porcentajes del destajo. Lo que cambia vale desde ese momento; ningún lavado ni ninguna asistencia ya registrados cambian, porque cada uno guardó el precio y la regla de su día. La base rechaza un valor que no sirve, como una hora mal escrita.
 
+El tablero del dueño está implementado. Muestra lo cobrado hoy por medio de pago, los autos entregados y en piso, la cobranza de los últimos siete días, los servicios más pedidos, lo que se dejó de cobrar por pagos incompletos, lo que se le debe al personal y las incidencias sin resolver. Todas las sumas las hace la base; la pantalla solo las dibuja. El bloque de predicción de demanda y segmentación queda indicado como pendiente: sin semanas de histórico los modelos no tienen de qué aprender, y no se muestran datos simulados como si fueran del negocio.
+
 En el menú de la aplicación, cada módulo aparece como una sección. Las secciones que solo ve el dueño son liquidación, personal, tarifas y configuración, y el tablero; las demás las ven los dos roles. Mientras un módulo no esté implementado, su sección se muestra sin enlace y con la marca «pronto».
 
 ### Recorrido de una visita
