@@ -54,7 +54,8 @@ El orden importa, porque la aplicación no puede levantarse contra una base de d
 - Reemplazar las tarifas de ejemplo por las tarifas reales del negocio.
 - Copiar .env.example a web/.env.local y completar las dos variables públicas.
 - Instalar las dependencias y levantar la aplicación en modo desarrollo.
-- Crear el primer usuario desde el panel de Supabase y asignarle el rol de dueño en la tabla de perfiles, porque sin perfil ninguna política de seguridad lo deja ver nada.
+- Desactivar en Supabase el registro público de usuarios (Authentication, opción de permitir registros nuevos).
+- Crear el primer usuario desde el panel de Supabase, confirmado, y asignarle el rol de dueño en la tabla de perfiles desde el editor SQL, porque sin perfil ninguna política de seguridad lo deja ver nada.
 
 El último paso es el que más confusión causa la primera vez: un usuario recién creado en Supabase existe para la autenticación pero no para el negocio, de modo que inicia sesión correctamente y no ve absolutamente ningún dato hasta que se le crea su perfil.
 
