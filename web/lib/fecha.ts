@@ -21,6 +21,17 @@ export function horaEnLima(): string {
   }).format(new Date());
 }
 
+// Un timestamptz de la base ("2026-10-29T13:05:00+00:00") -> "08:05" en
+// Lima. Para mostrar la hora de ingreso o de entrega de un auto.
+export function horaDeLima(instante: string): string {
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: ZONA,
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).format(new Date(instante));
+}
+
 // "08:05" o "08:05:00" -> minutos desde la medianoche (485). Para comparar
 // horas sin pasar por Date.
 export function minutosDelDia(hora: string): number {

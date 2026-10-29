@@ -671,6 +671,16 @@ export type Database = {
     Functions: {
       fn_es_dueno: { Args: never; Returns: boolean }
       fn_es_personal: { Args: never; Returns: boolean }
+      fn_registrar_ingreso: {
+        Args: {
+          p_observacion?: string
+          p_placa: string
+          p_servicios: number[]
+          p_tipo_vehiculo_id: number
+          p_trabajador_id: number
+        }
+        Returns: number
+      }
     }
     Enums: {
       estado_asistencia: "puntual" | "tardanza" | "no_laboro" | "falta"
