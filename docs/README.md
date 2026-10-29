@@ -70,6 +70,8 @@ El principio que ordena los permisos es que el dueño tiene un superconjunto de 
 
 El registro del personal está implementado: el dueño agrega trabajadores, los da de baja y los reactiva. Va antes que la asistencia porque no se puede marcar la entrada de alguien que no existe en el sistema.
 
+La asistencia está implementada en su parte diaria: el operador o el dueño marca la entrada o la falta de cada trabajador activo. La hora la pone el sistema en el momento de marcar, en hora de Lima y al minuto, de modo que llegar a las 8:05 todavía es puntual y a las 8:06 ya es tardanza. Al marcar se copian en la fila la hora de referencia y la tolerancia vigentes, y a los de destajo se les fija el porcentaje del día; a los de sueldo fijo no, porque no cobran porcentaje. Una falta marcada por error se corrige cuando el trabajador llega. Falta lo que decide el dueño con los de sueldo fijo que llegan tarde: el descuento y el día no laborado.
+
 En el menú de la aplicación, cada módulo aparece como una sección. Las secciones que solo ve el dueño son liquidación, personal, tarifas y configuración, y el tablero; las demás las ven los dos roles. Mientras un módulo no esté implementado, su sección se muestra sin enlace y con la marca «pronto».
 
 ### Recorrido de una visita

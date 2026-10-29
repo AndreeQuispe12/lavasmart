@@ -10,6 +10,24 @@ export function hoyEnLima(): string {
   );
 }
 
+// Hora actual en Lima como "HH:MM", en 24 horas. Sin segundos: el cuaderno
+// anota minutos, y así "8:05 o antes" incluye todo el minuto 8:05.
+export function horaEnLima(): string {
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: ZONA,
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).format(new Date());
+}
+
+// "08:05" o "08:05:00" -> minutos desde la medianoche (485). Para comparar
+// horas sin pasar por Date.
+export function minutosDelDia(hora: string): number {
+  const [h, m] = hora.split(":");
+  return Number(h) * 60 + Number(m);
+}
+
 // "2026-10-28" -> "28/10/2026", para mostrar. Se arma a mano para no pasar
 // por Date, que interpretaría la fecha en UTC y podría restarle un día.
 export function fechaCorta(iso: string): string {
