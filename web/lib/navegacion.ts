@@ -36,7 +36,7 @@ const SECCIONES: Seccion[] = [
     ruta: "/liquidacion",
     etiqueta: "Liquidación",
     soloDueno: true,
-    disponible: false,
+    disponible: true,
   },
   {
     ruta: "/personal",

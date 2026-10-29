@@ -14,6 +14,7 @@ Cada uno solo referencia objetos de los anteriores.
 | `07_registrar_ingreso.sql` | Función `fn_registrar_ingreso`: crea el cliente si la placa es nueva, el lavado y sus servicios en una sola transacción, con el precio copiado de `tarifa`. Rechaza un auto que ya está en piso y una placa registrada con otro tipo de vehículo. |
 | `08_registrar_entrega.sql` | Función `fn_registrar_entrega` y disparador `tr_lavado_cerrar`: la entrega pone la hora con el reloj de la base, un lavado entregado ya no se modifica desde la aplicación, y el auto y el lavador de un lavado no cambian. |
 | `09_incidencia_coherente.sql` | Disparador en `incidencia`: la visita indicada tiene que ser del mismo auto, la base pone la fecha, el estado inicial y quién registró, lo registrado no cambia, y solo el dueño la marca como resuelta. |
+| `10_liquidacion_completa.sql` | Agrega a `liquidacion` el sueldo y el descuento del trabajador fijo, la vista `v_liquidacion` con el total a pagar, `fn_calcular_liquidacion` (lo devengado en un día, sin escribir) y `fn_cerrar_dia` (lo congela; solo el dueño). Un día pasado se cierra siempre; el de hoy, solo para el lavador sin autos en piso, y desde ahí ese lavador no recibe ni entrega autos hoy. |
 | `pruebas/casos.sql` | 13 casos que comprueban que las reglas del negocio se cumplen. |
 
 ## Reglas

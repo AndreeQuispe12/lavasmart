@@ -24,6 +24,8 @@ Los totales se calculan. La tabla de lavados no almacena el total de la visita: 
 
 Devengar no es pagar. El destajo se calcula todos los días, pero el dinero sale del cajón cuando se entrega, que para varios lavadores es una vez por semana. Por eso la liquidación separa el cierre de la entrega, y varias liquidaciones diarias pueden compartir una misma fecha de entrega.
 
+La liquidación de un día cubre a los dos tipos de trabajador. Al de destajo le corresponde el porcentaje congelado en cada lavado aplicado a lo cobrado; al de sueldo fijo, su sueldo del día si trabajó, menos el descuento que el dueño puso en la asistencia. Un auto cuenta para el día en que se entrega, porque el destajo es sobre lo cobrado y se cobra al entregar. El total a pagar no se guarda: lo calcula la vista de liquidación.
+
 Nada se borra. Los catálogos se desactivan en lugar de eliminarse, las llaves foráneas impiden borrar aquello que ya se usó alguna vez y ninguna política de seguridad concede el permiso de borrado.
 
 ### Las dos vistas
@@ -60,7 +62,9 @@ Las reglas que siguen no dependen de que la aplicación se acuerde de aplicarlas
 | Solo el dueño resuelve una incidencia; lo registrado no cambia y una resuelta queda cerrada | Disparador | Que el operador cierre un reclamo que puede implicar plata, o que se reescriba lo que se reportó. |
 | No se entrega una visita sin servicios | Disparador | Cerrar un lavado sin saber qué se le hizo al auto. |
 | No se cobra más que el total facturado | Disparador | Un cobro superior a lo que corresponde. |
-| Una liquidación cerrada es inmutable | Disparador | Modificar el monto de un pago ya acordado. |
+| Una liquidación cerrada es inmutable y no se reabre | Disparador | Modificar el monto de un pago ya acordado. |
+| La liquidación la calcula y la cierra la base, y solo el dueño | Función fn_cerrar_dia | Montos sumados en la aplicación, o un destajo calculado con el porcentaje de hoy en vez del congelado. |
+| Con su día de hoy cerrado, un lavador no recibe ni entrega autos hoy | Disparador | Un cobro que quedaría fuera de toda liquidación. |
 
 ---
 
