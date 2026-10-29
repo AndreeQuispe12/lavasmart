@@ -21,6 +21,17 @@ export function horaEnLima(): string {
   }).format(new Date());
 }
 
+// El día "AAAA-MM-DD" de Lima como rango de instantes, para filtrar una
+// columna timestamptz: [00:00 de ese día, 00:00 del siguiente). Perú no
+// cambia de hora en el año, así que el desfase es siempre -05:00.
+export function rangoDelDiaEnLima(fecha: string): [string, string] {
+  const [anio, mes, dia] = fecha.split("-").map(Number);
+  const siguiente = new Date(Date.UTC(anio, mes - 1, dia + 1))
+    .toISOString()
+    .slice(0, 10);
+  return [`${fecha}T00:00:00-05:00`, `${siguiente}T00:00:00-05:00`];
+}
+
 // Un timestamptz de la base ("2026-10-29T13:05:00+00:00") -> "08:05" en
 // Lima. Para mostrar la hora de ingreso o de entrega de un auto.
 export function horaDeLima(instante: string): string {

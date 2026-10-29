@@ -12,6 +12,7 @@ Cada uno solo referencia objetos de los anteriores.
 | `05_asistencia_para_todos.sql` | Corrige el disparador que congela el destajo: ahora exige asistencia también al de sueldo fijo, y rechaza los días de falta o no laborado. Va después de `04`, porque conserva el `search_path` fijo. |
 | `06_decision_dueno_asistencia.sql` | Disparador en `asistencia`: el descuento y el "no laboró" solo los puede poner el dueño, el descuento solo es para el de sueldo fijo, y `autorizado_por` lo escribe la base con quien decidió. |
 | `07_registrar_ingreso.sql` | Función `fn_registrar_ingreso`: crea el cliente si la placa es nueva, el lavado y sus servicios en una sola transacción, con el precio copiado de `tarifa`. Rechaza un auto que ya está en piso y una placa registrada con otro tipo de vehículo. |
+| `08_registrar_entrega.sql` | Función `fn_registrar_entrega` y disparador `tr_lavado_cerrar`: la entrega pone la hora con el reloj de la base, un lavado entregado ya no se modifica desde la aplicación, y el auto y el lavador de un lavado no cambian. |
 | `pruebas/casos.sql` | 13 casos que comprueban que las reglas del negocio se cumplen. |
 
 ## Reglas
