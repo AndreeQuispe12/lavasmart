@@ -49,7 +49,7 @@ Las reglas que siguen no dependen de que la aplicación se acuerde de aplicarlas
 | No se entrega dinero de un día no cerrado | Restricción de tabla | Pagar sobre cifras que aún pueden cambiar. |
 | La placa se normaliza al guardarse | Disparador | Que la misma placa entre dos veces escrita de forma distinta. |
 | El porcentaje de destajo se congela al registrar la visita | Disparador | Que un cambio posterior de la regla altere pagos ya devengados. |
-| No se asigna un auto a un lavador sin asistencia | Disparador | Registrar trabajo de alguien que nunca llegó. |
+| No se asigna un auto a un lavador sin asistencia, ni en un día de falta o no laborado, sea de destajo o de sueldo fijo | Disparador | Registrar trabajo de alguien que nunca llegó. Hasta 05_asistencia_para_todos.sql, el de sueldo fijo se saltaba esta revisión. |
 | No se entrega una visita sin servicios | Disparador | Cerrar un lavado sin saber qué se le hizo al auto. |
 | No se cobra más que el total facturado | Disparador | Un cobro superior a lo que corresponde. |
 | Una liquidación cerrada es inmutable | Disparador | Modificar el monto de un pago ya acordado. |

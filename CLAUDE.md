@@ -18,11 +18,11 @@ Responder y escribir comentarios **en español**.
 | Modelo de datos | **Terminado y verificado.** `sql/01_esquema.sql` corre de una pasada sobre PostgreSQL 15+. Validado con 13 casos de prueba de comportamiento. |
 | Documentación | Terminada, en `docs/`. |
 | Mockups | 9 pantallas de escritorio, rol dueño. |
-| Proyecto en Supabase | **Creado** en São Paulo. Aplicados `01_esquema` y `04_seguridad_advisor`; `02` y `03` no. Tarifas de ejemplo. Un usuario con perfil `dueno`; registro público desactivado. |
+| Proyecto en Supabase | **Creado** en São Paulo. Aplicados `01_esquema`, `04_seguridad_advisor` y `05_asistencia_para_todos`; `02` y `03` no. Tarifas de ejemplo. Un usuario con perfil `dueno`; registro público desactivado. |
 | Aplicación web | **Con login.** Next.js con App Router, TypeScript y Tailwind; clientes en `web/lib/supabase` con `@supabase/ssr`; `web/proxy.ts` renueva la sesión y protege las rutas; `/login` con Server Action. Pantallas con sesión dentro del grupo `web/app/(panel)`, con menú por rol definido en `web/lib/navegacion.ts`; la sesión y el rol salen de `web/lib/sesion.ts`. Publicada en Vercel (`lavasmart.vercel.app`). Pantallas: `/personal` (solo dueño: alta, baja y reactivación; edición pendiente) y `/asistencia` (ambos roles: entrada y falta del día; el estado y el porcentaje los calcula la app en `asistencia/acciones.ts` porque ningún disparador lo hace; descuento y no laborado pendientes). Guardia de rol con `exigirDueno()` en `web/lib/sesion.ts`, en la página y en sus Server Actions. El día de negocio sale de `hoyEnLima()` en `web/lib/fecha.ts`. Tipos generados en `web/lib/supabase/tipos.ts` (regenerar con `npm run tipos` tras cada archivo de `sql/`). |
 | Proceso de analítica | **No existe todavía.** Y no puede entrenarse: no hay histórico. |
 
-Lo siguiente: corregir en un `sql/05` que `fn_fijar_porcentaje_destajo` deja asignar autos a un trabajador de sueldo fijo sin asistencia (sale antes de revisarla); después, descuento y no laborado en asistencia, y la pantalla de lavados. Toda pantalla solo del dueño llama a `exigirDueno()` en la página y en cada Server Action: ocultarla del menú no impide abrirla escribiendo la URL.
+Lo siguiente: descuento y no laborado en asistencia, y después la pantalla de lavados. Toda pantalla solo del dueño llama a `exigirDueno()` en la página y en cada Server Action: ocultarla del menú no impide abrirla escribiendo la URL.
 
 ---
 
