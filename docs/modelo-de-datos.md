@@ -66,6 +66,7 @@ Las reglas que siguen no dependen de que la aplicación se acuerde de aplicarlas
 | La liquidación la calcula y la cierra la base, y solo el dueño | Función fn_cerrar_dia | Montos sumados en la aplicación, o un destajo calculado con el porcentaje de hoy en vez del congelado. |
 | Con su día de hoy cerrado, un lavador no recibe ni entrega autos hoy | Disparador | Un cobro que quedaría fuera de toda liquidación. |
 | Cada parámetro de configuración tiene un formato válido, y la moneda y la zona horaria no se cambian desde la aplicación | Disparador | Una hora de entrada como «8 am» que dejaría a la pantalla de asistencia sin poder marcar a nadie. |
+| La modalidad y el sueldo de un trabajador solo cambian con todos sus días cerrados | Disparador | Que un día se pague con dos reglas: el destajo de sus autos y además un sueldo fijo. |
 | Un pago registrado no se deshace ni cambia de fecha, y solo lo registra el dueño | Disparador y función fn_entregar_pago | Que un pago desaparezca del registro, o que se pague dos veces el mismo día. |
 
 ---

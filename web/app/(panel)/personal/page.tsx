@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { fechaCorta, hoyEnLima } from "@/lib/fecha";
 import { exigirDueno } from "@/lib/sesion";
 import { crearClienteServidor } from "@/lib/supabase/servidor";
@@ -7,8 +8,13 @@ import { FormularioTrabajador } from "./formulario";
 
 export const metadata: Metadata = { title: "Personal · LavaSmart" };
 
-export default async function PaginaPersonal() {
+// ?editar=<id> abre el formulario con los datos de ese trabajador; tras
+// guardar, la acción vuelve con ?editado=1.
+export default async function PaginaPersonal({
+  searchParams,
+}: PageProps<"/personal">) {
   await exigirDueno();
+  const parametros = await searchParams;
 
   const supabase = await crearClienteServidor();
   const { data, error } = await supabase
@@ -22,6 +28,9 @@ export default async function PaginaPersonal() {
   // El tipo de cada fila lo deduce el cliente a partir del select y de los
   // tipos generados: no hace falta escribirlo.
   const trabajadores = data ?? [];
+  const enEdicion = trabajadores.find(
+    (t) => String(t.id) === parametros.editar,
+  );
 
   return (
     <>
@@ -33,7 +42,34 @@ export default async function PaginaPersonal() {
         </p>
       </div>
 
-      <FormularioTrabajador hoy={hoyEnLima()} />
+      {parametros.editado === "1" && !enEdicion && (
+        <p role="status" className="text-sm text-green-600">
+          Cambios guardados.
+        </p>
+      )}
+
+      {/* key: al pasar de un trabajador a otro, el formulario arranca de
+          cero con los datos del nuevo. */}
+      {enEdicion ? (
+        <FormularioTrabajador
+          key={enEdicion.id}
+          hoy={hoyEnLima()}
+          editar={{
+            id: enEdicion.id,
+            valores: {
+              nombres: enEdicion.nombres,
+              apellidos: enEdicion.apellidos,
+              documento: enEdicion.documento,
+              modalidad: enEdicion.modalidad,
+              frecuencia: enEdicion.frecuencia,
+              sueldo: enEdicion.sueldo_dia?.toFixed(2) ?? "",
+              fechaIngreso: enEdicion.fecha_ingreso,
+            },
+          }}
+        />
+      ) : (
+        <FormularioTrabajador hoy={hoyEnLima()} />
+      )}
 
       {error ? (
         <p className="font-mono text-sm text-red-600">{error.message}</p>
@@ -83,7 +119,13 @@ export default async function PaginaPersonal() {
                       {t.activo ? "Activo" : "De baja"}
                     </span>
                   </td>
-                  <td className="py-2 text-right">
+                  <td className="flex justify-end gap-2 py-2">
+                    <Link
+                      href={`/personal?editar=${t.id}`}
+                      className="rounded-lg border border-zinc-500/30 px-3 py-1 hover:bg-zinc-500/10"
+                    >
+                      Editar
+                    </Link>
                     {/* bind fija el id y el nuevo estado: el botón no
                         necesita campos ocultos. */}
                     <form action={cambiarActivo.bind(null, t.id, !t.activo)}>
