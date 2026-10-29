@@ -56,6 +56,8 @@ Las reglas que siguen no dependen de que la aplicación se acuerde de aplicarlas
 | Un auto no puede estar dos veces en piso, y una placa no cambia de tipo de vehículo | Función fn_registrar_ingreso | Duplicar una visita o cobrar un auto con la tarifa de otro tipo. |
 | Una visita entregada ya no se modifica desde la aplicación, ni por el dueño | Disparador | Bajar después el monto cobrado: la caja cuadraría con un cajón al que le falta dinero y el destajo del lavador cambiaría. Una corrección se hace desde el editor SQL. |
 | La hora de entrega la pone la base, y el auto y el lavador de una visita no cambian | Disparador | Una entrega con una hora inventada, o un porcentaje de destajo congelado para otro lavador. |
+| Una incidencia ligada a una visita solo puede ser de una visita de ese mismo auto | Disparador | Que un reclamo de un auto termine atribuido al lavador que atendió a otro. |
+| Solo el dueño resuelve una incidencia; lo registrado no cambia y una resuelta queda cerrada | Disparador | Que el operador cierre un reclamo que puede implicar plata, o que se reescriba lo que se reportó. |
 | No se entrega una visita sin servicios | Disparador | Cerrar un lavado sin saber qué se le hizo al auto. |
 | No se cobra más que el total facturado | Disparador | Un cobro superior a lo que corresponde. |
 | Una liquidación cerrada es inmutable | Disparador | Modificar el monto de un pago ya acordado. |
