@@ -20,6 +20,14 @@ Cada fila de salida guarda no solo el segmento asignado sino también los tres v
 
 Una tercera tabla registra las métricas de cada entrenamiento: error cuadrático medio y error absoluto medio para la regresión, coeficiente de silueta y número de grupos para el agrupamiento, junto con cuántas filas se usaron. Sin esa tabla no habría forma de sostener que un modelo mejoró, ni de explicar por qué un modelo entrenado en el primer mes de operación es menos confiable que el mismo modelo seis meses después.
 
+## Dónde se ven los resultados
+
+En el tablero del dueño, al final, hay un bloque con los dos modelos: la demanda esperada para cada uno de los próximos siete días, con su intervalo; la cantidad de clientes en cada segmento, y al elegir uno, la lista de esos clientes con los tres valores que explican por qué están ahí; y debajo, cuándo se entrenó cada modelo, con cuántas filas y con qué métricas, para saber cuánto creerle. En la pantalla de inicio, los dos roles ven una sola línea con los autos esperados para hoy.
+
+La segmentación es solo del dueño, y lo hace cumplir la base de datos: es una lista de placas, que son dato personal, y sirve para decisiones comerciales. La demanda no identifica a nadie y le sirve al operador para organizar el día.
+
+Mientras las tablas de salida estén vacías, cada bloque dice que está pendiente. No se muestran datos simulados como si fueran del negocio.
+
 ## El prerrequisito que no se puede saltar
 
 Ninguno de los dos modelos funciona sin histórico. Una regresión de demanda necesita varios meses de operación registrada para distinguir el patrón semanal del ruido, y una segmentación necesita clientes con más de una visita para que la frecuencia signifique algo.

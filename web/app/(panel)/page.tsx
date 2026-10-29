@@ -16,24 +16,36 @@ export default async function Inicio() {
   const supabase = await crearClienteServidor();
   // count con head: true cuenta en la base sin traer las filas.
   const contar = { count: "exact" as const, head: true };
-  const [activos, marcados, enPiso, incidencias, caja] = await Promise.all([
-    supabase.from("trabajador").select("id", contar).eq("activo", true),
-    supabase.from("asistencia").select("id", contar).eq("fecha", hoy),
-    supabase.from("lavado").select("id", contar).eq("estado", "en_proceso"),
-    supabase.from("incidencia").select("id", contar).neq("estado", "resuelta"),
-    supabase
-      .from("v_caja_dia")
-      .select("cobrado_total, autos_entregados")
-      .eq("fecha", hoy)
-      .maybeSingle(),
-  ]);
+  const [activos, marcados, enPiso, incidencias, caja, demanda] =
+    await Promise.all([
+      supabase.from("trabajador").select("id", contar).eq("activo", true),
+      supabase.from("asistencia").select("id", contar).eq("fecha", hoy),
+      supabase.from("lavado").select("id", contar).eq("estado", "en_proceso"),
+      supabase
+        .from("incidencia")
+        .select("id", contar)
+        .neq("estado", "resuelta"),
+      supabase
+        .from("v_caja_dia")
+        .select("cobrado_total, autos_entregados")
+        .eq("fecha", hoy)
+        .maybeSingle(),
+      // Lo que el modelo espera para hoy, si ya hay modelo (sql/15). No tiene
+      // datos de personas: la ven los dos roles.
+      supabase
+        .from("v_demanda_vigente")
+        .select("vehiculos_estimados, intervalo_inferior, intervalo_superior")
+        .eq("fecha_objetivo", hoy)
+        .maybeSingle(),
+    ]);
 
   const error =
     activos.error ??
     marcados.error ??
     enPiso.error ??
     incidencias.error ??
-    caja.error;
+    caja.error ??
+    demanda.error;
   if (error) {
     return <p className="font-mono text-sm text-red-600">{error.message}</p>;
   }
@@ -46,6 +58,20 @@ export default async function Inicio() {
       <div>
         <h1 className="text-3xl font-semibold">Hoy</h1>
         <p className="text-zinc-500">{fechaCorta(hoy)}</p>
+        {/* Sin modelo entrenado no se dice nada: mejor nada que un número
+            inventado. */}
+        {demanda.data?.vehiculos_estimados != null && (
+          <p className="mt-1">
+            Hoy se esperan unos{" "}
+            <strong>
+              {Math.round(demanda.data.vehiculos_estimados)} autos
+            </strong>
+            {demanda.data.intervalo_inferior != null &&
+              demanda.data.intervalo_superior != null &&
+              ` (entre ${Math.round(demanda.data.intervalo_inferior)} y ${Math.round(demanda.data.intervalo_superior)})`}
+            .
+          </p>
+        )}
       </div>
 
       <Link
