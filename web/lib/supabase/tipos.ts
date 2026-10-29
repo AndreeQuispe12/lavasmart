@@ -671,6 +671,14 @@ export type Database = {
     Functions: {
       fn_es_dueno: { Args: never; Returns: boolean }
       fn_es_personal: { Args: never; Returns: boolean }
+      fn_registrar_entrega: {
+        Args: {
+          p_lavado_id: number
+          p_metodo: Database["public"]["Enums"]["metodo_pago"]
+          p_monto: number
+        }
+        Returns: undefined
+      }
       fn_registrar_ingreso: {
         Args: {
           p_observacion?: string
