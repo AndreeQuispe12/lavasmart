@@ -26,6 +26,8 @@ Las dos vistas se ejecutan con los permisos de quien consulta y no con los de su
 
 Las pantallas que son solo del dueño tienen además una guardia en el servidor: si otro rol abre su dirección escribiéndola a mano, la aplicación lo devuelve al inicio. La misma guardia protege las acciones que esas pantallas ejecutan, porque una acción del servidor se puede invocar sin pasar por la pantalla. La guardia es una comodidad, no la defensa: aunque faltara, las políticas de la base rechazarían la escritura.
 
+Hay una decisión del dueño que vive en una tabla que el operador sí puede editar: la asistencia, donde el dueño pone el descuento o el día no laborado de un trabajador de sueldo fijo. Ahí las políticas por tabla no alcanzan, porque permiten editar la fila entera. Un disparador revisa la columna que cambia: si es el descuento o el no laborado, exige que quien escribe sea el dueño, y anota quién lo decidió.
+
 Ninguna política concede el permiso de borrado a ningún rol. Las tablas de salida son de solo lectura incluso para el dueño: quien escribe en ellas es el proceso de analítica, que se conecta con la clave de servicio y por tanto no pasa por estas políticas.
 
 ## Datos personales

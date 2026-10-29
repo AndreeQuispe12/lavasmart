@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { fechaCorta, hoyEnLima } from "@/lib/fecha";
+import { obtenerSesion } from "@/lib/sesion";
 import { crearClienteServidor } from "@/lib/supabase/servidor";
 import type { Enums } from "@/lib/supabase/tipos";
 import { BotonesAsistencia } from "./botones";
+import { DecisionDueno } from "./decision";
 import { leerReglasAsistencia } from "./reglas";
 
 export const metadata: Metadata = { title: "Asistencia · LavaSmart" };
@@ -22,7 +24,7 @@ export default async function PaginaAsistencia() {
   const supabase = await crearClienteServidor();
   const hoy = hoyEnLima();
 
-  const [trabajadores, asistencias, reglas] = await Promise.all([
+  const [trabajadores, asistencias, reglas, { rol }] = await Promise.all([
     supabase
       .from("trabajador")
       .select("id, nombres, apellidos, modalidad")
@@ -31,10 +33,11 @@ export default async function PaginaAsistencia() {
     supabase
       .from("asistencia")
       .select(
-        "trabajador_id, estado, hora_ingreso, porcentaje_destajo, hora_referencia, tolerancia_minutos",
+        "trabajador_id, estado, hora_ingreso, porcentaje_destajo, descuento_monto, descuento_motivo",
       )
       .eq("fecha", hoy),
     leerReglasAsistencia(supabase),
+    obtenerSesion(),
   ]);
 
   const error = trabajadores.error ?? asistencias.error;
@@ -106,6 +109,12 @@ export default async function PaginaAsistencia() {
                               ` · ${a.porcentaje_destajo} %`}
                           </p>
                         )}
+                        {a.descuento_monto > 0 && (
+                          <p className="text-amber-700">
+                            Descuento S/ {a.descuento_monto.toFixed(2)} ·{" "}
+                            {a.descuento_motivo}
+                          </p>
+                        )}
                       </div>
                     )}
                     {(!a || a.estado === "falta") && (
@@ -115,6 +124,13 @@ export default async function PaginaAsistencia() {
                       />
                     )}
                   </div>
+                  {/* Solo el dueño, y solo para el fijo que llegó tarde: el
+                      de destajo ya paga su tardanza con el 40 %. */}
+                  {rol === "dueno" &&
+                    t.modalidad === "fijo" &&
+                    a?.estado === "tardanza" && (
+                      <DecisionDueno trabajadorId={t.id} />
+                    )}
                 </li>
               );
             })}
