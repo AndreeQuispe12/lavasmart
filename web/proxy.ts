@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { supabaseClave, supabaseUrl } from "@/lib/supabase/env";
+import type { Database } from "@/lib/supabase/tipos";
 
 // Corre antes de cada página. Hace dos cosas:
 // 1. Renueva la sesión de Supabase si el token venció, y deja las cookies
@@ -10,7 +11,7 @@ import { supabaseClave, supabaseUrl } from "@/lib/supabase/env";
 export async function proxy(request: NextRequest) {
   let respuesta = NextResponse.next({ request });
 
-  const supabase = createServerClient(supabaseUrl, supabaseClave, {
+  const supabase = createServerClient<Database>(supabaseUrl, supabaseClave, {
     cookies: {
       getAll() {
         return request.cookies.getAll();

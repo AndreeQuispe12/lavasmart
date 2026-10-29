@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { supabaseClave, supabaseUrl } from "./env";
+import type { Database } from "./tipos";
 
 // Cliente para Server Components, Server Functions y Route Handlers.
 // Hay que crear uno nuevo en cada petición: lleva dentro las cookies (la
@@ -8,7 +9,9 @@ import { supabaseClave, supabaseUrl } from "./env";
 export async function crearClienteServidor() {
   const almacen = await cookies();
 
-  return createServerClient(supabaseUrl, supabaseClave, {
+  // <Database>: cada .from("tabla") conoce sus columnas y sus tipos, así
+  // que un nombre de columna mal escrito es un error de compilación.
+  return createServerClient<Database>(supabaseUrl, supabaseClave, {
     cookies: {
       getAll() {
         return almacen.getAll();

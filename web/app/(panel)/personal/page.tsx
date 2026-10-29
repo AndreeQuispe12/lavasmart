@@ -7,18 +7,6 @@ import { FormularioTrabajador } from "./formulario";
 
 export const metadata: Metadata = { title: "Personal · LavaSmart" };
 
-type Trabajador = {
-  id: number;
-  nombres: string;
-  apellidos: string;
-  documento: string;
-  modalidad: "destajo" | "fijo";
-  frecuencia: "diario" | "semanal";
-  sueldo_dia: number | null;
-  fecha_ingreso: string;
-  activo: boolean;
-};
-
 export default async function PaginaPersonal() {
   await exigirDueno();
 
@@ -31,7 +19,9 @@ export default async function PaginaPersonal() {
     // Activos primero; los dados de baja quedan al final, no desaparecen.
     .order("activo", { ascending: false })
     .order("apellidos");
-  const trabajadores = (data ?? []) as Trabajador[];
+  // El tipo de cada fila lo deduce el cliente a partir del select y de los
+  // tipos generados: no hace falta escribirlo.
+  const trabajadores = data ?? [];
 
   return (
     <>

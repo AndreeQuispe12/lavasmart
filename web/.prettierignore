@@ -3,3 +3,5 @@
 node_modules/
 package-lock.json
 next-env.d.ts
+# Tipos generados desde el esquema con `npm run tipos`: no se editan a mano.
+lib/supabase/tipos.ts
