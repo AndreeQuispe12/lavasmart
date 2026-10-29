@@ -24,6 +24,8 @@ Las dos vistas se ejecutan con los permisos de quien consulta y no con los de su
 | Liquidaciones | Sin acceso | Lectura y escritura |
 | Salidas de los modelos | Solo lectura | Solo lectura |
 
+Las pantallas que son solo del dueño tienen además una guardia en el servidor: si otro rol abre su dirección escribiéndola a mano, la aplicación lo devuelve al inicio. La misma guardia protege las acciones que esas pantallas ejecutan, porque una acción del servidor se puede invocar sin pasar por la pantalla. La guardia es una comodidad, no la defensa: aunque faltara, las políticas de la base rechazarían la escritura.
+
 Ninguna política concede el permiso de borrado a ningún rol. Las tablas de salida son de solo lectura incluso para el dueño: quien escribe en ellas es el proceso de analítica, que se conecta con la clave de servicio y por tanto no pasa por estas políticas.
 
 ## Datos personales

@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { cache } from "react";
 import { crearClienteServidor } from "@/lib/supabase/servidor";
 
@@ -28,3 +29,14 @@ export const obtenerSesion = cache(async (): Promise<Sesion> => {
 
   return { correo, rol: perfil?.rol ?? null };
 });
+
+// Guardia de las pantallas y acciones que son solo del dueño. Ocultarlas
+// del menú no basta: un operador puede escribir la URL a mano. Esto lo
+// devuelve al inicio. Detrás sigue RLS, que rechazaría la escritura igual;
+// la guardia evita que llegue a ver una pantalla que no puede usar.
+export async function exigirDueno(): Promise<void> {
+  const { rol } = await obtenerSesion();
+  if (rol !== "dueno") {
+    redirect("/");
+  }
+}
