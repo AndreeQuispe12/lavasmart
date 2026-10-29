@@ -726,6 +726,24 @@ export type Database = {
           },
         ]
       }
+      v_por_pagar: {
+        Row: {
+          desde: string | null
+          dias: number | null
+          hasta: string | null
+          monto: number | null
+          trabajador_id: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "liquidacion_trabajador_fk"
+            columns: ["trabajador_id"]
+            isOneToOne: false
+            referencedRelation: "trabajador"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       fn_calcular_liquidacion: {
@@ -745,6 +763,13 @@ export type Database = {
         Returns: {
           resultado: string
           trabajador_id: number
+        }[]
+      }
+      fn_entregar_pago: {
+        Args: { p_hasta: string; p_trabajador_id: number }
+        Returns: {
+          dias: number
+          monto: number
         }[]
       }
       fn_es_dueno: { Args: never; Returns: boolean }

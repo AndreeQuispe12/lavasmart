@@ -15,6 +15,7 @@ Cada uno solo referencia objetos de los anteriores.
 | `08_registrar_entrega.sql` | Función `fn_registrar_entrega` y disparador `tr_lavado_cerrar`: la entrega pone la hora con el reloj de la base, un lavado entregado ya no se modifica desde la aplicación, y el auto y el lavador de un lavado no cambian. |
 | `09_incidencia_coherente.sql` | Disparador en `incidencia`: la visita indicada tiene que ser del mismo auto, la base pone la fecha, el estado inicial y quién registró, lo registrado no cambia, y solo el dueño la marca como resuelta. |
 | `10_liquidacion_completa.sql` | Agrega a `liquidacion` el sueldo y el descuento del trabajador fijo, la vista `v_liquidacion` con el total a pagar, `fn_calcular_liquidacion` (lo devengado en un día, sin escribir) y `fn_cerrar_dia` (lo congela; solo el dueño). Un día pasado se cierra siempre; el de hoy, solo para el lavador sin autos en piso, y desde ahí ese lavador no recibe ni entrega autos hoy. |
+| `11_entrega_del_pago.sql` | Vista `v_por_pagar` (días cerrados sin pagar y su suma, por trabajador) y `fn_entregar_pago`, que marca pagado todo lo pendiente de un trabajador hasta un día, con la fecha de hoy en Lima. Solo el dueño; un pago registrado no se deshace. |
 | `pruebas/casos.sql` | 13 casos que comprueban que las reglas del negocio se cumplen. |
 
 ## Reglas

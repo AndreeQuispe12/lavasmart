@@ -4,6 +4,7 @@ import { fechaCorta, hoyEnLima } from "@/lib/fecha";
 import { exigirDueno } from "@/lib/sesion";
 import { crearClienteServidor } from "@/lib/supabase/servidor";
 import { CerrarDia } from "./cerrar";
+import { PagarTrabajador } from "./pagar";
 
 export const metadata: Metadata = { title: "Liquidación · LavaSmart" };
 
@@ -24,14 +25,17 @@ export default async function PaginaLiquidacion({
       : hoy;
 
   const supabase = await crearClienteServidor();
-  const [calculo, guardadas] = await Promise.all([
+  const [calculo, guardadas, porPagar] = await Promise.all([
     // Lo que se devengaría si se cerrara ahora. No escribe nada.
     supabase.rpc("fn_calcular_liquidacion", { p_fecha: fecha }),
     // Lo ya cerrado, con el total que calcula la vista.
     supabase.from("v_liquidacion").select("*").eq("fecha", fecha),
+    // Lo cerrado que todavía no se pagó, sumado por la base.
+    supabase.from("v_por_pagar").select("*"),
   ]);
 
-  const error = calculo.error ?? guardadas.error;
+  const error = calculo.error ?? guardadas.error ?? porPagar.error;
+  const deudas = porPagar.data ?? [];
   const cerradas = new Map(
     (guardadas.data ?? []).map((l) => [l.trabajador_id!, l]),
   );
@@ -44,8 +48,8 @@ export default async function PaginaLiquidacion({
 
   const { data: personas } = await supabase
     .from("trabajador")
-    .select("id, nombres, apellidos, modalidad")
-    .in("id", ids);
+    .select("id, nombres, apellidos, modalidad, frecuencia")
+    .in("id", [...ids, ...deudas.map((d) => d.trabajador_id!)]);
   const persona = new Map((personas ?? []).map((p) => [p.id, p]));
 
   // Una fila por trabajador: si su día está cerrado, los montos congelados;
@@ -98,6 +102,48 @@ export default async function PaginaLiquidacion({
           dinero sale cuando se entrega.
         </p>
       </div>
+
+      <section className="flex flex-col gap-2 rounded-lg border border-zinc-500/20 p-4">
+        <h2 className="text-lg font-semibold">Por pagar</h2>
+        {deudas.length === 0 ? (
+          <p className="text-zinc-500">
+            No hay días cerrados pendientes de pago.
+          </p>
+        ) : (
+          <ul className="flex flex-col divide-y divide-zinc-500/15">
+            {deudas.map((d) => {
+              const p = persona.get(d.trabajador_id!);
+              return (
+                <li
+                  key={d.trabajador_id}
+                  className="flex flex-wrap items-center justify-between gap-3 py-2"
+                >
+                  <div>
+                    <p className="font-medium">
+                      {p?.apellidos}, {p?.nombres}
+                    </p>
+                    <p className="text-sm text-zinc-500">
+                      Cobra {p?.frecuencia === "diario" ? "diario" : "semanal"}{" "}
+                      · {d.dias} día(s) del {fechaCorta(d.desde!)} al{" "}
+                      {fechaCorta(d.hasta!)}
+                    </p>
+                  </div>
+                  <PagarTrabajador
+                    trabajadorId={d.trabajador_id!}
+                    hasta={d.hasta!}
+                    monto={d.monto ?? 0}
+                  />
+                </li>
+              );
+            })}
+          </ul>
+        )}
+        <p className="text-sm text-zinc-500">
+          Al pagar se marcan como entregados todos sus días cerrados hasta el
+          último que ves aquí. Queda registrado el día en que salió el dinero, y
+          no se deshace.
+        </p>
+      </section>
 
       {/* GET: elegir el día no escribe nada. */}
       <form className="flex items-end gap-2">
