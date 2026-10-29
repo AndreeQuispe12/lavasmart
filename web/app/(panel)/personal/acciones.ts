@@ -1,10 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { hoyEnLima } from "@/lib/fecha";
 import { exigirDueno } from "@/lib/sesion";
 import { crearClienteServidor } from "@/lib/supabase/servidor";
-import type { Enums } from "@/lib/supabase/tipos";
+import type { Enums, TablesInsert } from "@/lib/supabase/tipos";
 
 export type ValoresTrabajador = {
   nombres: string;
@@ -29,14 +30,25 @@ export type EstadoTrabajador = {
 const MONTO = /^\d{1,6}(\.\d{1,2})?$/;
 const FECHA = /^\d{4}-\d{2}-\d{2}$/;
 
-export async function crearTrabajador(
-  anterior: EstadoTrabajador,
-  formulario: FormData,
-): Promise<EstadoTrabajador> {
-  // Una Server Action se puede llamar sin pasar por la página, así que la
-  // guardia va aquí también.
-  await exigirDueno();
+// Las columnas que escribe el formulario, tomadas del tipo generado.
+type Fila = Pick<
+  TablesInsert<"trabajador">,
+  | "nombres"
+  | "apellidos"
+  | "documento"
+  | "modalidad"
+  | "frecuencia"
+  | "sueldo_dia"
+  | "fecha_ingreso"
+>;
 
+// Lee y valida el formulario. La usan el alta y la edición: las reglas de
+// la modalidad son las mismas en los dos casos.
+function leerFormulario(formulario: FormData): {
+  valores: ValoresTrabajador;
+  fila?: Fila;
+  error?: string;
+} {
   const texto = (campo: string) => String(formulario.get(campo) ?? "").trim();
   const valores: ValoresTrabajador = {
     nombres: texto("nombres"),
@@ -47,12 +59,7 @@ export async function crearTrabajador(
     sueldo: texto("sueldo"),
     fechaIngreso: texto("fechaIngreso") || hoyEnLima(),
   };
-  const fallar = (error: string): EstadoTrabajador => ({
-    ...anterior,
-    error,
-    mensaje: null,
-    valores,
-  });
+  const fallar = (error: string) => ({ valores, error });
 
   if (!valores.nombres || !valores.apellidos || !valores.documento) {
     return fallar("Completa nombres, apellidos y documento.");
@@ -90,16 +97,39 @@ export async function crearTrabajador(
     sueldoDia = null; // Destajo: cobra un porcentaje, no un sueldo.
   }
 
-  const supabase = await crearClienteServidor();
-  const { error } = await supabase.from("trabajador").insert({
-    nombres: valores.nombres,
-    apellidos: valores.apellidos,
-    documento: valores.documento,
-    modalidad: valores.modalidad,
-    frecuencia,
-    sueldo_dia: sueldoDia,
-    fecha_ingreso: valores.fechaIngreso,
+  return {
+    valores,
+    fila: {
+      nombres: valores.nombres,
+      apellidos: valores.apellidos,
+      documento: valores.documento,
+      modalidad: valores.modalidad,
+      frecuencia,
+      sueldo_dia: sueldoDia,
+      fecha_ingreso: valores.fechaIngreso,
+    },
+  };
+}
+
+export async function crearTrabajador(
+  anterior: EstadoTrabajador,
+  formulario: FormData,
+): Promise<EstadoTrabajador> {
+  // Una Server Action se puede llamar sin pasar por la página, así que la
+  // guardia va aquí también.
+  await exigirDueno();
+
+  const { valores, fila, error: invalido } = leerFormulario(formulario);
+  const fallar = (error: string): EstadoTrabajador => ({
+    ...anterior,
+    error,
+    mensaje: null,
+    valores,
   });
+  if (!fila) return fallar(invalido!);
+
+  const supabase = await crearClienteServidor();
+  const { error } = await supabase.from("trabajador").insert(fila);
 
   if (error) {
     return fallar(traducirError(error.code, error.message, valores.documento));
@@ -112,6 +142,36 @@ export async function crearTrabajador(
     valores: null,
     version: anterior.version + 1,
   };
+}
+
+// Corrige los datos de un trabajador. Nombre, documento y frecuencia
+// cambian siempre; la modalidad y el sueldo, solo con sus días cerrados
+// (sql/13), para que ningún día se pague con dos reglas.
+export async function editarTrabajador(
+  id: number,
+  anterior: EstadoTrabajador,
+  formulario: FormData,
+): Promise<EstadoTrabajador> {
+  await exigirDueno();
+
+  const { valores, fila, error: invalido } = leerFormulario(formulario);
+  const fallar = (error: string): EstadoTrabajador => ({
+    ...anterior,
+    error,
+    mensaje: null,
+    valores,
+  });
+  if (!fila) return fallar(invalido!);
+
+  const supabase = await crearClienteServidor();
+  const { error } = await supabase.from("trabajador").update(fila).eq("id", id);
+
+  if (error) {
+    return fallar(traducirError(error.code, error.message, valores.documento));
+  }
+
+  revalidatePath("/personal");
+  redirect("/personal?editado=1");
 }
 
 // Baja o reactivación. Nunca DELETE: el trabajador tiene lavados,
@@ -143,6 +203,11 @@ function traducirError(codigo: string, mensaje: string, documento: string) {
   }
   if (mensaje.includes("trabajador_fijo_es_semanal")) {
     return "Un trabajador de sueldo fijo siempre cobra semanal.";
+  }
+  // Las reglas de sql/13 empiezan con su nombre y siguen en español.
+  const regla = /^trabajador_[a-z_]+: (.+)$/.exec(mensaje);
+  if (regla) {
+    return regla[1].charAt(0).toUpperCase() + regla[1].slice(1);
   }
   if (codigo === "42501") {
     return "No tienes permiso para registrar personal.";
