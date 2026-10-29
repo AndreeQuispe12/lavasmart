@@ -70,7 +70,7 @@ El último paso es el que más confusión causa la primera vez: un usuario reci�
 
 ### Código
 
-- El formato lo decide Prettier y no se discute en las revisiones.
+- El formato lo decide Prettier y no se discute en las revisiones. Está instalado en web/ con la versión fija, para que todos formateen igual: npm run format corrige y npm run format:check solo revisa, y conviene correrlo antes de cada commit. Respeta el salto de línea de cada archivo, porque en Windows Git los convierte y si no Prettier marcaría como mal formateados archivos que están bien.
 - ESLint marca los errores reales; las advertencias no se silencian sin comentario que lo justifique.
 - Los tipos del esquema se generan desde Supabase en lugar de escribirse a mano.
 

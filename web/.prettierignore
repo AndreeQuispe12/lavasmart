@@ -1,0 +1,5 @@
+# Generado por herramientas: no se escribe a mano, no se formatea.
+.next/
+node_modules/
+package-lock.json
+next-env.d.ts
