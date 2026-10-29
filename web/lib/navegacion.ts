@@ -24,7 +24,7 @@ const SECCIONES: Seccion[] = [
     ruta: "/lavados",
     etiqueta: "Lavados",
     soloDueno: false,
-    disponible: false,
+    disponible: true,
   },
   {
     ruta: "/incidencias",
