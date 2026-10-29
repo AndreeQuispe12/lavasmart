@@ -82,6 +82,8 @@ La liquidación está implementada en su parte de cierre. El dueño elige un dí
 
 La entrega del dinero también está implementada. Arriba de la liquidación se lista, por trabajador, lo que se le debe: cuántos días cerrados tiene sin pagar, desde cuándo y cuánto suman. Al pagar, el dueño confirma el monto y quedan marcados como pagados todos esos días hasta el último que vio en pantalla, con la fecha de hoy. Así sirve igual para quien cobra cada día y para quien cobra una vez por semana. Un pago registrado no se deshace.
 
+Las tarifas y la configuración están implementadas. El dueño edita el tarifario como en el cuaderno, con los servicios en filas y los tipos de vehículo en columnas, y las reglas de asistencia: la hora de entrada, la tolerancia y los dos porcentajes del destajo. Lo que cambia vale desde ese momento; ningún lavado ni ninguna asistencia ya registrados cambian, porque cada uno guardó el precio y la regla de su día. La base rechaza un valor que no sirve, como una hora mal escrita.
+
 En el menú de la aplicación, cada módulo aparece como una sección. Las secciones que solo ve el dueño son liquidación, personal, tarifas y configuración, y el tablero; las demás las ven los dos roles. Mientras un módulo no esté implementado, su sección se muestra sin enlace y con la marca «pronto».
 
 ### Recorrido de una visita

@@ -48,7 +48,7 @@ const SECCIONES: Seccion[] = [
     ruta: "/configuracion",
     etiqueta: "Tarifas y configuración",
     soloDueno: true,
-    disponible: false,
+    disponible: true,
   },
   { ruta: "/tablero", etiqueta: "Tablero", soloDueno: true, disponible: false },
 ];
