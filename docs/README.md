@@ -76,6 +76,8 @@ El ingreso de los autos está implementado. El operador escribe la placa, elige 
 
 La entrega con cobro también está implementada. En cada auto en piso, el botón de entregar propone cobrar el total; si el cliente paga menos, se baja el monto y la pantalla muestra el saldo, que se anota solo para el destajo porque el cliente no vuelve a pagar. Cobrar cero se puede, pero hay que confirmar que el cliente se fue sin pagar. Al entregar, la base pone la hora con su propio reloj, y desde ese momento la visita ya no se modifica desde la aplicación. Arriba de la pantalla se ve la caja del día, por medio de pago, y abajo los autos entregados hoy con su estado de pago.
 
+Las incidencias están implementadas. Para registrar un reclamo se busca la placa y el sistema muestra las últimas visitas de ese auto, con su fecha y su lavador; se elige en cuál pasó, o se indica que no tiene visita asociada cuando el reclamo llega días después y no se puede atribuir. Las pendientes se listan con su estado: el operador puede pasarlas a en proceso, pero solo el dueño las resuelve, escribiendo cómo, porque la resolución puede implicar dinero. Esa regla la hace cumplir la base de datos.
+
 En el menú de la aplicación, cada módulo aparece como una sección. Las secciones que solo ve el dueño son liquidación, personal, tarifas y configuración, y el tablero; las demás las ven los dos roles. Mientras un módulo no esté implementado, su sección se muestra sin enlace y con la marca «pronto».
 
 ### Recorrido de una visita

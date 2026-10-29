@@ -30,7 +30,7 @@ const SECCIONES: Seccion[] = [
     ruta: "/incidencias",
     etiqueta: "Incidencias",
     soloDueno: false,
-    disponible: false,
+    disponible: true,
   },
   {
     ruta: "/liquidacion",

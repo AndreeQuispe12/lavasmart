@@ -43,6 +43,21 @@ export function horaDeLima(instante: string): string {
   }).format(new Date(instante));
 }
 
+// Un timestamptz de la base -> "29/10 08:05" en Lima. Para listas donde
+// las filas pueden ser de días distintos.
+export function fechaHoraDeLima(instante: string): string {
+  const partes = new Intl.DateTimeFormat("en-GB", {
+    timeZone: ZONA,
+    day: "2-digit",
+    month: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(new Date(instante));
+  const p = (tipo: string) => partes.find((x) => x.type === tipo)?.value;
+  return `${p("day")}/${p("month")} ${p("hour")}:${p("minute")}`;
+}
+
 // "08:05" o "08:05:00" -> minutos desde la medianoche (485). Para comparar
 // horas sin pasar por Date.
 export function minutosDelDia(hora: string): number {
