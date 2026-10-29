@@ -26,7 +26,7 @@ Cubre la arquitectura, el stack, la capa de datos, la seguridad, la capa de anal
 
 El sistema se encuentra en desarrollo. Las secciones que describen componentes todavía no construidos lo indican de forma explícita; todo lo demás describe lo que ya existe y está verificado.
 
-Al momento de esta versión, el modelo de datos está terminado y verificado, y la aplicación web está andamiada con sus dependencias instaladas pero sin pantallas construidas. El proyecto en la nube todavía no se ha creado.
+Al momento de esta versión, el modelo de datos está terminado y verificado, y el proyecto en la nube está creado con el esquema aplicado. La aplicación web está publicada en Vercel con inicio de sesión y con el marco de navegación: un menú lateral que muestra a cada rol solo sus secciones, todas marcadas como pendientes salvo el inicio. Ninguna pantalla de operación está construida todavía.
 
 ### Documentos relacionados
 
@@ -67,6 +67,8 @@ El principio que ordena los permisos es que el dueño tiene un superconjunto de 
 | Tablero | Caja del día, autos en piso, indicadores y salidas de los modelos. | Diseñado |
 
 «Diseñado» significa que el módulo tiene su modelo de datos definido y verificado y su pantalla especificada en los mockups, pero todavía no está implementado.
+
+En el menú de la aplicación, cada módulo aparece como una sección. Las secciones que solo ve el dueño son liquidación, personal, tarifas y configuración, y el tablero; las demás las ven los dos roles. Mientras un módulo no esté implementado, su sección se muestra sin enlace y con la marca «pronto».
 
 ### Recorrido de una visita
 
