@@ -623,6 +623,17 @@ export type Database = {
         }
         Relationships: []
       }
+      v_demanda_vigente: {
+        Row: {
+          fecha_objetivo: string | null
+          generado_en: string | null
+          intervalo_inferior: number | null
+          intervalo_superior: number | null
+          modelo_version: string | null
+          vehiculos_estimados: number | null
+        }
+        Relationships: []
+      }
       v_lavado: {
         Row: {
           cliente_id: number | null
@@ -740,6 +751,27 @@ export type Database = {
             columns: ["trabajador_id"]
             isOneToOne: false
             referencedRelation: "trabajador"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      v_segmento_vigente: {
+        Row: {
+          calculado_en: string | null
+          cliente_id: number | null
+          frecuencia: number | null
+          modelo_version: string | null
+          monetario: number | null
+          placa: string | null
+          recencia_dias: number | null
+          segmento: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cliente_segmento_cliente_fk"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "cliente"
             referencedColumns: ["id"]
           },
         ]

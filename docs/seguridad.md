@@ -22,7 +22,8 @@ Las dos vistas se ejecutan con los permisos de quien consulta y no con los de su
 | Clientes, lavados, detalle, incidencias, asistencia | Leer, crear y editar | Leer, crear y editar |
 | Perfiles | Solo el propio | Todos, y es el único que los administra |
 | Liquidaciones | Sin acceso | Lectura y escritura |
-| Salidas de los modelos | Solo lectura | Solo lectura |
+| Salidas de los modelos: demanda y métricas | Solo lectura | Solo lectura |
+| Salidas de los modelos: segmentación de clientes (contiene placas) | Sin acceso | Solo lectura |
 
 Las pantallas que son solo del dueño tienen además una guardia en el servidor: si otro rol abre su dirección escribiéndola a mano, la aplicación lo devuelve al inicio. La misma guardia protege las acciones que esas pantallas ejecutan, porque una acción del servidor se puede invocar sin pasar por la pantalla. La guardia es una comodidad, no la defensa: aunque faltara, las políticas de la base rechazarían la escritura.
 

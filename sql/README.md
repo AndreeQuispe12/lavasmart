@@ -19,6 +19,7 @@ Cada uno solo referencia objetos de los anteriores.
 | `12_configuracion_valida.sql` | Disparadores: cada parámetro de `configuracion` con su formato (hora HH:MM, tolerancia 0 a 120, porcentajes 0 a 100), moneda y zona horaria fijas, ninguna clave nueva desde la aplicación; y `actualizado_en` de `tarifa` y `configuracion` con el reloj de la base al cambiar. |
 | `13_cambio_de_modalidad.sql` | Disparador en `trabajador`: la modalidad y el sueldo diario solo cambian si no tiene autos en piso ni días con actividad sin liquidación cerrada, para que ningún día se pague con dos reglas. Nombre, documento y frecuencia cambian siempre. |
 | `14_tablero.sql` | Funciones de solo lectura para el tablero: `fn_tablero_resumen` (lo no cobrado por pagos incompletos de autos entregados, y lo que se le debe al personal) y `fn_servicios_mas_pedidos` (cantidad y monto por servicio, con el precio congelado). |
+| `15_analitica_visible.sql` | La segmentación de clientes pasa a ser solo del dueño (contiene placas, que son dato personal); la demanda y las métricas siguen para todo el personal. Vistas `v_demanda_vigente` y `v_segmento_vigente`, que eligen la versión más reciente de cada modelo. |
 | `pruebas/casos.sql` | 13 casos que comprueban que las reglas del negocio se cumplen. |
 
 ## Reglas

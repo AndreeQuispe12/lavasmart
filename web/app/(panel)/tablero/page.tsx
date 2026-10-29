@@ -5,6 +5,7 @@ import { fechaCorta, hoyEnLima, sumarDias } from "@/lib/fecha";
 import { exigirDueno } from "@/lib/sesion";
 import { crearClienteServidor } from "@/lib/supabase/servidor";
 import { TIPOS } from "../incidencias/textos";
+import { Analitica } from "./analitica";
 
 export const metadata: Metadata = { title: "Tablero · LavaSmart" };
 
@@ -12,8 +13,13 @@ const DIAS_SEMANA = ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"];
 
 // Solo el dueño. Solo lee: todas las sumas las hace la base (v_caja_dia y
 // las funciones de sql/14); aquí solo se dibujan.
-export default async function PaginaTablero() {
+// ?segmento=<nombre> abre la lista de clientes de ese segmento.
+export default async function PaginaTablero({
+  searchParams,
+}: PageProps<"/tablero">) {
   await exigirDueno();
+  const pedido = (await searchParams).segmento;
+  const segmento = typeof pedido === "string" ? pedido : null;
 
   const hoy = hoyEnLima();
   const desde = sumarDias(hoy, -6); // los últimos 7 días, hoy incluido
@@ -197,18 +203,7 @@ export default async function PaginaTablero() {
         </section>
       </div>
 
-      {/* Los modelos no se entrenan sin histórico (docs/analitica.md). No se
-          muestran datos simulados como si fueran del negocio. */}
-      <section className="rounded-lg border border-dashed border-zinc-500/40 p-4 text-sm text-zinc-500">
-        <h2 className="text-lg font-semibold text-inherit">
-          Predicción de demanda y segmentación de clientes
-        </h2>
-        <p className="mt-1">
-          Pendiente. Se habilita cuando el sistema tenga varias semanas de
-          lavados registrados: sin histórico, los modelos no tienen de qué
-          aprender.
-        </p>
-      </section>
+      <Analitica hoy={hoy} segmento={segmento} />
     </>
   );
 }
