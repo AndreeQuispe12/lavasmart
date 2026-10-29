@@ -42,7 +42,7 @@ const SECCIONES: Seccion[] = [
     ruta: "/personal",
     etiqueta: "Personal",
     soloDueno: true,
-    disponible: false,
+    disponible: true,
   },
   {
     ruta: "/configuracion",
