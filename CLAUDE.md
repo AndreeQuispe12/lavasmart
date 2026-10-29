@@ -18,11 +18,11 @@ Responder y escribir comentarios **en español**.
 | Modelo de datos | **Terminado y verificado.** `sql/01_esquema.sql` corre de una pasada sobre PostgreSQL 15+. Validado con 13 casos de prueba de comportamiento. |
 | Documentación | Terminada, en `docs/`. |
 | Mockups | 9 pantallas de escritorio, rol dueño. |
-| Proyecto en Supabase | **Creado** en São Paulo. Aplicados `01_esquema` y `04_seguridad_advisor`; `02` y `03` no. Tarifas de ejemplo. Sin usuarios ni perfiles. |
-| Aplicación web | **Conectada a Supabase.** Next.js con App Router, TypeScript y Tailwind; clientes de navegador y servidor en `web/lib/supabase` con `@supabase/ssr`. Sin login ni pantallas todavía. |
+| Proyecto en Supabase | **Creado** en São Paulo. Aplicados `01_esquema` y `04_seguridad_advisor`; `02` y `03` no. Tarifas de ejemplo. Un usuario con perfil `dueno`; registro público desactivado. |
+| Aplicación web | **Con login.** Next.js con App Router, TypeScript y Tailwind; clientes en `web/lib/supabase` con `@supabase/ssr`; `web/proxy.ts` renueva la sesión y protege las rutas; `/login` con Server Action. Sin pantallas de operación todavía. |
 | Proceso de analítica | **No existe todavía.** Y no puede entrenarse: no hay histórico. |
 
-Lo siguiente es el login con Supabase Auth y el primer perfil de dueño.
+Lo siguiente es el layout con menú por rol y, después, la pantalla de asistencia.
 
 ---
 

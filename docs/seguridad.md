@@ -4,6 +4,10 @@
 
 La autenticación la gestiona Supabase. El sistema no almacena contraseñas ni implementa su propio inicio de sesión, lo que elimina de raíz toda una categoría de errores. Cada usuario autenticado tiene una fila en la tabla de perfiles que lo asocia con su rol dentro del negocio y, opcionalmente, con su ficha de personal.
 
+El ingreso es con correo y contraseña. El registro público está desactivado en Supabase: las cuentas las crea el dueño, porque los lavadores no usan el sistema y nadie de fuera tiene por qué tener una. La sesión viaja en cookies, y antes de cada página la aplicación verifica el token y lo renueva si venció; quien no tiene sesión termina en la pantalla de ingreso. Si el ingreso falla, el mensaje no distingue entre un correo inexistente y una contraseña equivocada, para no confirmarle a un extraño qué correos tienen cuenta.
+
+El primer perfil de dueño no lo puede crear la aplicación: según las políticas, solo un dueño administra perfiles, y al principio no existe ninguno. Ese único perfil se inserta una vez desde el editor SQL de Supabase. No va en un archivo de sql/ porque es un dato de una persona y no un cambio de esquema, y el repositorio es público.
+
 ## Autorización por fila
 
 Las quince tablas tienen activada la seguridad a nivel de fila antes de que se inserte el primer dato. El estado por defecto es el más restrictivo: sin una política que lo autorice explícitamente, ninguna consulta devuelve nada.
