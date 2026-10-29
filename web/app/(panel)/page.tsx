@@ -76,7 +76,7 @@ export default async function Inicio() {
 
       <Link
         href="/lavados"
-        className="self-start rounded-lg bg-sky-700 px-6 py-4 text-lg font-semibold text-white hover:bg-sky-800"
+        className="self-start rounded-lg bg-acento px-6 py-4 text-lg font-semibold text-white hover:bg-acento-oscuro"
       >
         Ingresar un auto
       </Link>
@@ -120,7 +120,7 @@ export default async function Inicio() {
       {rol === "dueno" && (
         <Link
           href="/tablero"
-          className="self-start text-sm text-sky-700 underline hover:text-sky-800"
+          className="self-start text-sm text-acento underline hover:text-acento-oscuro"
         >
           Ver cómo va el negocio en el tablero →
         </Link>

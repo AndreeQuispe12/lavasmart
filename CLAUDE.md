@@ -31,7 +31,7 @@ Todas las pantallas del menú están construidas. Lo siguiente: las tarifas real
 | Capa | Tecnología |
 | --- | --- |
 | Aplicación | Next.js (App Router) + TypeScript + React |
-| Estilos | Tailwind CSS. Los mockups están hechos con ese enfoque, así que trasladarlos es casi directo. |
+| Estilos | Tailwind CSS con la identidad del prototipo validado: tokens `marca` (#0B2545), `marca-2`, `acento` (#0891B2), `acento-oscuro` y `celeste` en `web/app/globals.css`; fuente Inter; iconos de `lucide-react`; logo y fondo del login en `web/public/marca/`. Botones con `bg-acento`, nunca colores sueltos. |
 | Datos | PostgreSQL 15+ gestionado en Supabase, región São Paulo |
 | Autenticación | Supabase Auth |
 | Despliegue | Vercel, conectado a la rama principal de GitHub |

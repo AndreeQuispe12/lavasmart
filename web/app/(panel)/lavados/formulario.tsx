@@ -51,7 +51,7 @@ export function FormularioIngreso(props: {
       <button
         type="submit"
         disabled={enviando || props.lavadores.length === 0}
-        className="self-start rounded-lg bg-sky-700 px-5 py-3 font-semibold text-white hover:bg-sky-800 disabled:opacity-60"
+        className="self-start rounded-lg bg-acento px-5 py-3 font-semibold text-white hover:bg-acento-oscuro disabled:opacity-60"
       >
         {enviando ? "Registrando..." : "Registrar ingreso"}
       </button>

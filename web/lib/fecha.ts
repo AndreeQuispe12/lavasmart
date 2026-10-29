@@ -72,6 +72,27 @@ export function minutosDelDia(hora: string): number {
   return Number(h) * 60 + Number(m);
 }
 
+// "2026-10-29" -> "jueves". Se arma desde la fecha sola, en UTC, para no
+// correrse de día.
+export function diaDeLaSemana(fecha: string): string {
+  const [anio, mes, dia] = fecha.split("-").map(Number);
+  return new Intl.DateTimeFormat("es-PE", {
+    weekday: "long",
+    timeZone: "UTC",
+  }).format(new Date(Date.UTC(anio, mes - 1, dia)));
+}
+
+// "2026-10-29" -> "29 de octubre de 2026".
+export function fechaLarga(fecha: string): string {
+  const [anio, mes, dia] = fecha.split("-").map(Number);
+  return new Intl.DateTimeFormat("es-PE", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(Date.UTC(anio, mes - 1, dia)));
+}
+
 // "2026-10-28" -> "28/10/2026", para mostrar. Se arma a mano para no pasar
 // por Date, que interpretaría la fecha en UTC y podría restarle un día.
 export function fechaCorta(iso: string): string {
