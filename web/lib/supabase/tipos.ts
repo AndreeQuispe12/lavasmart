@@ -355,7 +355,9 @@ export type Database = {
           fecha_entrega: string | null
           id: number
           monto_cobrado_base: number
+          monto_descuento: number
           monto_destajo: number
+          monto_sueldo: number
           trabajador_id: number
         }
         Insert: {
@@ -366,7 +368,9 @@ export type Database = {
           fecha_entrega?: string | null
           id?: never
           monto_cobrado_base?: number
+          monto_descuento?: number
           monto_destajo?: number
+          monto_sueldo?: number
           trabajador_id: number
         }
         Update: {
@@ -377,7 +381,9 @@ export type Database = {
           fecha_entrega?: string | null
           id?: never
           monto_cobrado_base?: number
+          monto_descuento?: number
           monto_destajo?: number
+          monto_sueldo?: number
           trabajador_id?: number
         }
         Relationships: [
@@ -667,8 +673,80 @@ export type Database = {
           },
         ]
       }
+      v_liquidacion: {
+        Row: {
+          cerrada: boolean | null
+          entregada: boolean | null
+          fecha: string | null
+          fecha_cierre: string | null
+          fecha_entrega: string | null
+          id: number | null
+          monto_a_pagar: number | null
+          monto_cobrado_base: number | null
+          monto_descuento: number | null
+          monto_destajo: number | null
+          monto_sueldo: number | null
+          trabajador_id: number | null
+        }
+        Insert: {
+          cerrada?: boolean | null
+          entregada?: boolean | null
+          fecha?: string | null
+          fecha_cierre?: string | null
+          fecha_entrega?: string | null
+          id?: number | null
+          monto_a_pagar?: never
+          monto_cobrado_base?: number | null
+          monto_descuento?: number | null
+          monto_destajo?: number | null
+          monto_sueldo?: number | null
+          trabajador_id?: number | null
+        }
+        Update: {
+          cerrada?: boolean | null
+          entregada?: boolean | null
+          fecha?: string | null
+          fecha_cierre?: string | null
+          fecha_entrega?: string | null
+          id?: number | null
+          monto_a_pagar?: never
+          monto_cobrado_base?: number | null
+          monto_descuento?: number | null
+          monto_destajo?: number | null
+          monto_sueldo?: number | null
+          trabajador_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "liquidacion_trabajador_fk"
+            columns: ["trabajador_id"]
+            isOneToOne: false
+            referencedRelation: "trabajador"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
+      fn_calcular_liquidacion: {
+        Args: { p_fecha: string }
+        Returns: {
+          autos_en_piso: number
+          modalidad: Database["public"]["Enums"]["modalidad_pago"]
+          monto_cobrado_base: number
+          monto_descuento: number
+          monto_destajo: number
+          monto_sueldo: number
+          trabajador_id: number
+        }[]
+      }
+      fn_cerrar_dia: {
+        Args: { p_fecha: string }
+        Returns: {
+          resultado: string
+          trabajador_id: number
+        }[]
+      }
       fn_es_dueno: { Args: never; Returns: boolean }
       fn_es_personal: { Args: never; Returns: boolean }
       fn_registrar_entrega: {
