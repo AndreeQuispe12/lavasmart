@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { hoyEnLima } from "@/lib/fecha";
 import { exigirDueno } from "@/lib/sesion";
 import { crearClienteServidor } from "@/lib/supabase/servidor";
+import type { Enums } from "@/lib/supabase/tipos";
 
 export type ValoresTrabajador = {
   nombres: string;
@@ -24,9 +25,7 @@ export type EstadoTrabajador = {
   version: number;
 };
 
-// Hasta 6 enteros y 2 decimales: lo que cabe en numeric(8,2). El monto
-// viaja como texto hasta la base; nunca pasa por un número de punto
-// flotante.
+// Hasta 6 enteros y 2 decimales: lo que cabe en numeric(8,2).
 const MONTO = /^\d{1,6}(\.\d{1,2})?$/;
 const FECHA = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -68,8 +67,8 @@ export async function crearTrabajador(
   // Las reglas de la modalidad. La base las vuelve a exigir con
   // trabajador_sueldo_coherente y trabajador_fijo_es_semanal; aquí se
   // revisan antes para dar un mensaje claro.
-  let frecuencia: string;
-  let sueldoDia: string | null;
+  let frecuencia: Enums<"frecuencia_pago">;
+  let sueldoDia: number | null;
   if (valores.modalidad === "fijo") {
     if (!MONTO.test(valores.sueldo) || Number(valores.sueldo) === 0) {
       return fallar(
@@ -77,7 +76,12 @@ export async function crearTrabajador(
       );
     }
     frecuencia = "semanal"; // Regla del negocio: el fijo cobra semanal.
-    sueldoDia = valores.sueldo;
+    // El tipo generado pide number. Es seguro aquí: MONTO ya limitó el
+    // valor a 2 decimales y 8 dígitos, y un número así se envía en el JSON
+    // con los mismos dígitos que se escribieron; la base lo guarda como
+    // numeric exacto. Lo que no se debe hacer es SUMAR dinero en JS: los
+    // totales salen de las vistas de la base.
+    sueldoDia = Number(valores.sueldo);
   } else {
     if (valores.frecuencia !== "diario" && valores.frecuencia !== "semanal") {
       return fallar("Elige si cobra diario o semanal.");

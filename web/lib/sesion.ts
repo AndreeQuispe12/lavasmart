@@ -1,8 +1,9 @@
 import { redirect } from "next/navigation";
 import { cache } from "react";
 import { crearClienteServidor } from "@/lib/supabase/servidor";
+import type { Enums } from "@/lib/supabase/tipos";
 
-export type Rol = "operador" | "dueno";
+export type Rol = Enums<"rol_usuario">;
 
 export type Sesion = {
   correo: string;

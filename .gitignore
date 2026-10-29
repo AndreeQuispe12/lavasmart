@@ -5,8 +5,10 @@
 
 # Despliegue y CLI de Supabase: guardan el id del proyecto y tokens locales
 .vercel/
-supabase/.temp/
-supabase/.branches/
+# Con **/ valen en cualquier carpeta: la CLI crea web/supabase/ al correr
+# `npm run tipos` desde web/.
+**/supabase/.temp/
+**/supabase/.branches/
 
 # Node
 node_modules/
