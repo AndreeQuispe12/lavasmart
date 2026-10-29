@@ -1,41 +1,128 @@
+import Link from "next/link";
+import { soles } from "@/lib/dinero";
+import { fechaCorta, hoyEnLima } from "@/lib/fecha";
 import { obtenerSesion } from "@/lib/sesion";
 import { crearClienteServidor } from "@/lib/supabase/servidor";
 
-// Página provisional: el catálogo de vehículos sirve para comprobar que
-// RLS reconoce al usuario. La reemplaza el resumen del día cuando existan
-// las pantallas de operación.
+// "Hoy": lo primero que ve quien abre el sistema en la mañana. Responde
+// "¿qué hay que hacer ahora?" y lleva a la pantalla donde se hace. La ven
+// los dos roles; el dueño tiene además el acceso al tablero, que es "cómo
+// va el negocio". Solo lee: cuenta filas y muestra la caja que suma la base.
 export default async function Inicio() {
-  // Misma llamada que hace el layout: cache() la resuelve sin repetir la
-  // consulta.
+  // Misma llamada que hace el layout: cache() la resuelve sin repetirla.
   const { rol } = await obtenerSesion();
+  const hoy = hoyEnLima();
 
   const supabase = await crearClienteServidor();
-  const { data: vehiculos, error } = await supabase
-    .from("tipo_vehiculo")
-    .select("nombre")
-    .eq("activo", true)
-    .order("nombre");
+  // count con head: true cuenta en la base sin traer las filas.
+  const contar = { count: "exact" as const, head: true };
+  const [activos, marcados, enPiso, incidencias, caja] = await Promise.all([
+    supabase.from("trabajador").select("id", contar).eq("activo", true),
+    supabase.from("asistencia").select("id", contar).eq("fecha", hoy),
+    supabase.from("lavado").select("id", contar).eq("estado", "en_proceso"),
+    supabase.from("incidencia").select("id", contar).neq("estado", "resuelta"),
+    supabase
+      .from("v_caja_dia")
+      .select("cobrado_total, autos_entregados")
+      .eq("fecha", hoy)
+      .maybeSingle(),
+  ]);
+
+  const error =
+    activos.error ??
+    marcados.error ??
+    enPiso.error ??
+    incidencias.error ??
+    caja.error;
+  if (error) {
+    return <p className="font-mono text-sm text-red-600">{error.message}</p>;
+  }
+
+  const totalActivos = activos.count ?? 0;
+  const pendientes = Math.max(totalActivos - (marcados.count ?? 0), 0);
 
   return (
     <>
-      <h1 className="text-3xl font-semibold">Inicio</h1>
-      <p className="text-zinc-500">
-        Ingresaste como {rol === "dueno" ? "dueño" : "operador"}. Las pantallas
-        marcadas como «pronto» se van habilitando una por una.
-      </p>
+      <div>
+        <h1 className="text-3xl font-semibold">Hoy</h1>
+        <p className="text-zinc-500">{fechaCorta(hoy)}</p>
+      </div>
 
-      <section>
-        <h2 className="text-lg font-semibold">Tipos de vehículo</h2>
-        {error ? (
-          <p className="mt-2 font-mono text-sm text-red-700">{error.message}</p>
-        ) : (
-          <ul className="mt-2 list-inside list-disc">
-            {vehiculos.map((v) => (
-              <li key={v.nombre}>{v.nombre}</li>
-            ))}
-          </ul>
-        )}
+      <Link
+        href="/lavados"
+        className="self-start rounded-lg bg-sky-700 px-6 py-4 text-lg font-semibold text-white hover:bg-sky-800"
+      >
+        Ingresar un auto
+      </Link>
+
+      <section className="grid gap-3 sm:grid-cols-2">
+        <Tarjeta
+          href="/asistencia"
+          titulo="Asistencia"
+          valor={
+            totalActivos === 0
+              ? "Sin personal registrado"
+              : pendientes === 0
+                ? "Todos marcados"
+                : `Faltan marcar ${pendientes} de ${totalActivos}`
+          }
+          // Sin asistencia no se le asignan autos: es lo primero del día.
+          aviso={pendientes > 0}
+        />
+        <Tarjeta
+          href="/lavados"
+          titulo="En piso"
+          valor={`${enPiso.count ?? 0} auto(s) en proceso`}
+        />
+        <Tarjeta
+          href="/lavados"
+          titulo="Entregados hoy"
+          valor={`${caja.data?.autos_entregados ?? 0} · ${soles(caja.data?.cobrado_total ?? 0)}`}
+        />
+        <Tarjeta
+          href="/incidencias"
+          titulo="Incidencias"
+          valor={
+            (incidencias.count ?? 0) === 0
+              ? "Ninguna sin resolver"
+              : `${incidencias.count} sin resolver`
+          }
+          aviso={(incidencias.count ?? 0) > 0}
+        />
       </section>
+
+      {rol === "dueno" && (
+        <Link
+          href="/tablero"
+          className="self-start text-sm text-sky-700 underline hover:text-sky-800"
+        >
+          Ver cómo va el negocio en el tablero →
+        </Link>
+      )}
     </>
+  );
+}
+
+function Tarjeta({
+  href,
+  titulo,
+  valor,
+  aviso = false,
+}: {
+  href: string;
+  titulo: string;
+  valor: string;
+  aviso?: boolean;
+}) {
+  return (
+    <Link
+      href={href}
+      className={`rounded-lg border p-4 hover:bg-zinc-500/5 ${
+        aviso ? "border-amber-400" : "border-zinc-500/20"
+      }`}
+    >
+      <p className="text-sm text-zinc-500">{titulo}</p>
+      <p className="text-xl font-semibold">{valor}</p>
+    </Link>
   );
 }
