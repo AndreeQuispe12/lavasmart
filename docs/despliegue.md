@@ -20,6 +20,17 @@ El entrenamiento se ejecuta una vez por semana. Puede programarse como una tarea
 
 Conviene mantener dos proyectos de Supabase separados, uno de desarrollo y otro de producción, y no compartir la base de datos entre ambos. Probar contra la base real termina, tarde o temprano, con datos de prueba mezclados con lavados verdaderos, y separarlos después es mucho más caro que crear el segundo proyecto ahora.
 
+Así está organizado:
+
+| Proyecto de Supabase | Para qué | Quién lo usa | Datos |
+| --- | --- | --- | --- |
+| LavaSmart | Producción: el lavadero real | El sitio publicado (variables de Production en Vercel) | Solo reales |
+| LavaSmart-dev | Desarrollo, pruebas y demostraciones | El entorno local (web/.env.local) y las vistas previas de cada solicitud de incorporación (variables de Preview en Vercel) | Inventados, de 03_datos_prueba.sql |
+
+Los dos tienen el mismo esquema: 01 y del 04 al último archivo de sql/, en orden. El orden de trabajo con un archivo nuevo es siempre el mismo: se aplica primero en desarrollo, se prueba ahí con los datos de prueba y recién después se aplica en producción. El archivo 03 solo se ejecuta en desarrollo, y con la sesión en hora de Lima (set timezone = 'America/Lima'), porque usa la fecha actual y Supabase trabaja en UTC.
+
+Cada proyecto tiene sus propios usuarios. Las cuentas de prueba existen solo en desarrollo, y las del dueño y el operador reales, solo en producción.
+
 ---
 
 _Parte de la documentación técnica de LavaSmart. Si cambias el sistema, cambia también este archivo en el mismo commit._
