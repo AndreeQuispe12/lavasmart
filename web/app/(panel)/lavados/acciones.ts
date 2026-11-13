@@ -11,6 +11,56 @@ export type EstadoIngreso = {
 };
 
 const ENTERO = /^\d+$/;
+const CELULAR = /^9\d{8}$/;
+
+// Igual que fn_limpiar_telefono (sql/16): solo dígitos y sin el 51 del
+// país, para validar aquí con el mismo criterio que la base.
+function limpiarTelefono(texto: string): string {
+  const digitos = texto.replace(/\D/g, "");
+  return digitos.length === 11 && digitos.startsWith("51")
+    ? digitos.slice(2)
+    : digitos;
+}
+
+export type ClienteConocido = {
+  tipoVehiculoId: number;
+  nombre: string | null;
+  telefono: string | null;
+};
+
+// Lo que se sabe de una placa, para rellenar el formulario cuando el auto
+// vuelve. null si nunca vino. Lee con la sesión: RLS decide.
+export async function buscarCliente(
+  placa: string,
+): Promise<ClienteConocido | null> {
+  if (placa.replace(/[^A-Za-z0-9]/g, "").length !== 6) return null;
+  const supabase = await crearClienteServidor();
+  const { data } = await supabase
+    .rpc("fn_buscar_cliente", { p_placa: placa })
+    .maybeSingle();
+  if (!data) return null;
+  return {
+    tipoVehiculoId: data.tipo_vehiculo_id,
+    nombre: data.nombre,
+    telefono: data.telefono,
+  };
+}
+
+// Otras placas con el mismo celular: así se reconoce a un cliente con
+// varios autos.
+export async function placasDelTelefono(
+  telefono: string,
+  placaActual: string,
+): Promise<{ placa: string; nombre: string | null }[]> {
+  const limpio = limpiarTelefono(telefono);
+  if (!CELULAR.test(limpio)) return [];
+  const supabase = await crearClienteServidor();
+  const { data } = await supabase.rpc("fn_placas_del_telefono", {
+    p_telefono: limpio,
+    p_excepto: placaActual,
+  });
+  return data ?? [];
+}
 
 // Registra la llegada de un auto: cliente (si la placa es nueva), lavado y
 // servicios, todo en una transacción dentro de fn_registrar_ingreso
@@ -30,12 +80,19 @@ export async function registrarIngreso(
   const lavador = String(formulario.get("lavador") ?? "");
   const servicios = formulario.getAll("servicio").map(String);
   const observacion = String(formulario.get("observacion") ?? "").trim();
+  const nombre = String(formulario.get("nombre") ?? "").trim();
+  const telefono = limpiarTelefono(String(formulario.get("telefono") ?? ""));
 
   if (!placa) return fallar("Escribe la placa.");
   if (!ENTERO.test(tipo)) return fallar("Elige el tipo de vehículo.");
   if (!ENTERO.test(lavador)) return fallar("Elige el lavador.");
   if (servicios.length === 0 || !servicios.every((s) => ENTERO.test(s))) {
     return fallar("Marca al menos un servicio.");
+  }
+  if (nombre.length > 80)
+    return fallar("El nombre no puede pasar de 80 letras.");
+  if (telefono && !CELULAR.test(telefono)) {
+    return fallar("El celular debe tener 9 dígitos y empezar por 9.");
   }
 
   // Solo viajan ids: el precio lo copia la base desde tarifa.
@@ -46,6 +103,9 @@ export async function registrarIngreso(
     p_trabajador_id: Number(lavador),
     p_servicios: servicios.map(Number),
     p_observacion: observacion || undefined,
+    // Opcionales: vacíos no viajan y no borran lo que ya se sabía.
+    p_nombre: nombre || undefined,
+    p_telefono: telefono || undefined,
   });
 
   if (error) return fallar(traducirError(error.message));

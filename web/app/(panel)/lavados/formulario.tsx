@@ -1,8 +1,14 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useRef, useState } from "react";
 import { soles, sumarSoles } from "@/lib/dinero";
-import { registrarIngreso, type EstadoIngreso } from "./acciones";
+import { normalizarPlaca } from "@/lib/placa";
+import {
+  buscarCliente,
+  placasDelTelefono,
+  registrarIngreso,
+  type EstadoIngreso,
+} from "./acciones";
 
 type Opcion = { id: number; nombre: string };
 type Tarifa = {
@@ -75,6 +81,47 @@ function Campos({
   const [tipo, setTipo] = useState("");
   const [marcados, setMarcados] = useState<number[]>([]);
 
+  // Datos opcionales del cliente. Se rellenan solos si la placa ya vino.
+  const [nombre, setNombre] = useState("");
+  const [telefono, setTelefono] = useState("");
+  const [conocido, setConocido] = useState(false);
+  const [otrasPlacas, setOtrasPlacas] = useState<
+    { placa: string; nombre: string | null }[]
+  >([]);
+  // La última placa buscada: si el operador la cambia mientras llega la
+  // respuesta, la respuesta vieja se descarta.
+  const placaBuscada = useRef("");
+
+  async function alSalirDeLaPlaca(texto: string) {
+    const placa = normalizarPlaca(texto);
+    if (placa === placaBuscada.current) return;
+    placaBuscada.current = placa;
+    // Si lo escrito venía de otra placa, no se le pasa al auto nuevo.
+    if (conocido) {
+      setNombre("");
+      setTelefono("");
+    }
+    setConocido(false);
+    setOtrasPlacas([]);
+
+    const cliente = await buscarCliente(placa);
+    if (placaBuscada.current !== placa || !cliente) return;
+    setConocido(true);
+    setTipo(String(cliente.tipoVehiculoId));
+    setNombre(cliente.nombre ?? "");
+    setTelefono(cliente.telefono ?? "");
+  }
+
+  async function alSalirDelTelefono(texto: string) {
+    const placa = placaBuscada.current;
+    const placas = await placasDelTelefono(texto, placa);
+    if (placaBuscada.current !== placa) return;
+    setOtrasPlacas(placas);
+    // Si es la misma persona con otro auto, se le propone su nombre.
+    const conNombre = placas.find((p) => p.nombre);
+    if (!nombre.trim() && conNombre?.nombre) setNombre(conNombre.nombre);
+  }
+
   const precioDe = (servicioId: number) =>
     tarifas.find(
       (t) =>
@@ -99,8 +146,14 @@ function Campos({
           required
           autoComplete="off"
           placeholder="ABC-123"
+          onBlur={(e) => alSalirDeLaPlaca(e.target.value)}
           className={`${campo} text-lg uppercase`}
         />
+        {conocido && (
+          <span role="status" className="text-sm text-acento-oscuro">
+            Cliente conocido: datos de su visita anterior.
+          </span>
+        )}
       </label>
 
       <label className="flex flex-col gap-1">
@@ -121,6 +174,49 @@ function Campos({
             </option>
           ))}
         </select>
+      </label>
+
+      <label className="flex flex-col gap-1">
+        <span className="text-sm font-medium">
+          Nombre del cliente (opcional)
+        </span>
+        <input
+          name="nombre"
+          maxLength={80}
+          autoComplete="off"
+          value={nombre}
+          onChange={(e) => setNombre(e.target.value)}
+          placeholder="Solo si el cliente quiere darlo"
+          className={campo}
+        />
+      </label>
+
+      <label className="flex flex-col gap-1">
+        <span className="text-sm font-medium">Celular (opcional)</span>
+        <input
+          name="telefono"
+          type="tel"
+          inputMode="numeric"
+          autoComplete="off"
+          value={telefono}
+          onChange={(e) => setTelefono(e.target.value)}
+          onBlur={(e) => alSalirDelTelefono(e.target.value)}
+          placeholder="987 654 321"
+          className={campo}
+        />
+        <span className="text-xs text-zinc-500">
+          Para avisarle cuando su auto esté listo o si surge algún
+          inconveniente.
+        </span>
+        {otrasPlacas.length > 0 && (
+          <span role="status" className="text-sm text-acento-oscuro">
+            Este celular ya está registrado con{" "}
+            {otrasPlacas
+              .map((p) => (p.nombre ? `${p.placa} (${p.nombre})` : p.placa))
+              .join(", ")}
+            .
+          </span>
+        )}
       </label>
 
       <fieldset className="flex flex-col gap-2 sm:col-span-2">
