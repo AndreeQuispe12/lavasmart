@@ -6,7 +6,7 @@ Cuatro pruebas, todas sobre la base de desarrollo (LavaSmart-dev), que tiene tre
 | --- | --- | --- |
 | Reglas y permisos | ¿La base hace cumplir las reglas del dueño y lo que puede hacer cada rol? | 88 de 88 casos, después de corregir tres huecos que la propia prueba encontró |
 | Tiempo en la base | ¿Cuánto tarda cada consulta de las pantallas? | Todas por debajo de 20 ms |
-| Tiempo de la aplicación | ¿Cuánto tarda una pantalla de punta a punta? | 0,6 a 1,1 s; casi todo es distancia entre servidores, no cálculo |
+| Tiempo de la aplicación | ¿Cuánto tarda una pantalla de punta a punta? | 0,6 a 1,1 s con la app en Washington; 0,35 a 0,44 s después de moverla a São Paulo, junto a la base |
 | Modelos de analítica | ¿Los modelos superan a una referencia simple? | La demanda tiene 30 % menos error que la referencia; la segmentación forma 4 grupos con silueta de 0,505 |
 
 ---
@@ -65,22 +65,26 @@ Registrar y entregar un auto, lo que se hace frente al cliente, tarda menos de u
 
 ## 3. Tiempo de carga de la aplicación
 
-**Cómo se midió.** Con sesión de dueño en la aplicación publicada (`lavasmart.vercel.app`), se pidió cada pantalla 6 veces desde el navegador, en Lima. El tiempo incluye ir hasta el servidor de la aplicación, que este consulte la base y que la página vuelva.
+**Cómo se midió.** Con sesión de dueño en la aplicación publicada (`lavasmart.vercel.app`), se pidió cada pantalla 6 veces desde el navegador, en Lima. El tiempo incluye ir hasta el servidor de la aplicación, que este consulte la base y que la página vuelva. La región que respondió se leyó en la cabecera `x-vercel-id` de cada respuesta.
 
-| Pantalla | Mediana | Máximo |
-| --- | --- | --- |
-| Asistencia | 0,60 s | 0,63 s |
-| Personal | 0,63 s | 0,80 s |
-| Tarifas y configuración | 0,71 s | 0,99 s |
-| Incidencias | 0,73 s | 0,75 s |
-| Lavados | 0,94 s | 1,11 s |
-| Inicio | 0,98 s | 1,33 s |
-| Liquidación | 1,04 s | 1,18 s |
-| Tablero | 1,14 s | 1,17 s |
+**Lo que encontró la primera medición.** La base responde en menos de 20 ms, pero la pantalla tardaba alrededor de un segundo. La diferencia era distancia: la aplicación corría en Vercel en Washington (región `iad1`, la que Vercel usa por defecto) y la base está en São Paulo. Cada consulta cruzaba el continente de ida y vuelta, unos 120 ms, y una pantalla hace varias seguidas: validar la sesión, leer el perfil y después los datos. Se movió la aplicación a la región de São Paulo (`gru1`, en `web/vercel.json`) y se volvió a medir.
 
-La carga completa de Inicio en el navegador, con estilos y scripts, fue de 1,5 s. No hubo arranques en frío: la primera petición tardó lo mismo que las siguientes. Ese era el motivo para descartar un servidor propio en Render, donde la primera petición tardaba casi un minuto.
+| Pantalla | Antes: Washington (mediana) | Después: São Paulo (mediana) | Mejora |
+| --- | --- | --- | --- |
+| Asistencia | 0,60 s | 0,35 s | 42 % |
+| Personal | 0,63 s | 0,40 s | 37 % |
+| Tarifas y configuración | 0,71 s | 0,41 s | 43 % |
+| Incidencias | 0,73 s | 0,36 s | 51 % |
+| Lavados | 0,94 s | 0,41 s | 57 % |
+| Inicio | 0,98 s | 0,43 s | 56 % |
+| Liquidación | 1,04 s | 0,39 s | 63 % |
+| Tablero | 1,14 s | 0,44 s | 62 % |
 
-**Lo que encontró.** La base responde en menos de 20 ms, pero la pantalla tarda alrededor de un segundo. La diferencia es distancia: la aplicación corre en Vercel en Washington (región `iad1`, la que Vercel usa por defecto) y la base está en São Paulo. Cada consulta cruza el continente de ida y vuelta, unos 120 ms, y una pantalla hace varias seguidas: validar la sesión, leer el perfil y después los datos. Mover la aplicación a la región de São Paulo (`gru1`) dejaría servidor y base en la misma ciudad.
+Las pantallas que más consultan, como el tablero y la liquidación, son las que más mejoran, porque cada consulta se ahorra el viaje de ida y vuelta. Ahora todas responden por debajo de medio segundo. Hubo un pico aislado de 2,1 s en Inicio entre 48 peticiones; los demás máximos quedaron por debajo de 0,56 s.
+
+No hubo arranques en frío: la primera petición tardó lo mismo que las siguientes. Ese era el motivo para descartar un servidor propio en Render, donde la primera petición tardaba casi un minuto.
+
+Los ~0,35 s que quedan son sobre todo el viaje desde Lima: la cabecera muestra que la petición entra a la red de Vercel por Washington antes de llegar a São Paulo. Esa entrada la decide Vercel y no se configura en el plan gratuito.
 
 **Otro hallazgo.** La aplicación publicada muestra la predicción de demanda, que solo existe en la base de desarrollo: hoy `lavasmart.vercel.app` está conectada a desarrollo y no a producción. Separar esas variables es la tarea pendiente #25.
 
