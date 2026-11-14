@@ -147,6 +147,9 @@ Leer esta lista antes de escribir una consulta. Son trampas reales, no hipótesi
 - **Un disparador ve solo lo que RLS le deja ver a quien escribe.** Si la regla lee una tabla
   que el operador no ve (como `liquidacion`), la función va con `SECURITY DEFINER`; si no,
   la regla se cumple solo cuando escribe el dueño (`sql/17`).
+- **RLS no reemplaza al filtro.** Una política decide qué filas *puede* ver cada uno, no
+  cuáles quieres: `perfil` le muestra al dueño todas las filas, así que leer "mi perfil" sin
+  `.eq("id", ...)` falló en cuanto hubo un segundo usuario y el dueño quedó "sin rol".
 - **Probar una regla desde el editor SQL no prueba nada:** los disparadores se saltan sin
   usuario conectado. Usar `sql/pruebas/reglas.sql`, que se hace pasar por cada rol.
 - **No modificar un archivo SQL ya ejecutado.** Se corrige con uno nuevo y numerado.
