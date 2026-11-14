@@ -26,8 +26,12 @@ Así está organizado:
 
 | Proyecto de Supabase | Para qué | Quién lo usa | Datos |
 | --- | --- | --- | --- |
-| LavaSmart | Producción: el lavadero real | El sitio publicado (variables de Production en Vercel) | Solo reales |
-| LavaSmart-dev | Desarrollo, pruebas y demostraciones | El entorno local (web/.env.local) y las vistas previas de cada solicitud de incorporación (variables de Preview en Vercel) | Inventados, de 03_datos_prueba.sql |
+| LavaSmart | Producción: el lavadero real | El sitio publicado, `lavasmart.vercel.app` (variables de Production en Vercel) | Solo reales |
+| LavaSmart-dev | Desarrollo, pruebas y demostraciones | El entorno local (web/.env.local), las vistas previas de cada solicitud de incorporación y la demo (variables de Preview y Development en Vercel) | Inventados: 03_datos_prueba.sql y tres meses de histórico simulado |
+
+En Vercel, cada variable de Supabase aparece dos veces: una con los valores de producción, marcada solo para Production, y otra con los de desarrollo, para Preview y Development. Son variables con prefijo `NEXT_PUBLIC_`, que se copian dentro del código al compilar: después de cambiarlas hay que volver a desplegar. Hasta el 14 de noviembre de 2026 todas apuntaban a desarrollo, y el sitio publicado mostraba datos simulados.
+
+**La demo.** La rama `demo` existe solo para tener una dirección fija conectada a desarrollo, con datos para mostrar: `lavasmart-git-demo-andry-u-s-projects.vercel.app`. No se fusiona con la rama principal. Para actualizarla con lo último de la principal, se fusiona la principal en ella y se sube; un commit vacío basta para que Vercel la vuelva a compilar. Las vistas previas no piden cuenta de Vercel (se desactivó la protección del proyecto), así que la demo abre desde cualquier computadora; solo contienen datos inventados y para ver algo igual hay que iniciar sesión en LavaSmart. En desarrollo hay una cuenta de dueño y una de operador para mostrar los dos roles.
 
 Los dos tienen el mismo esquema: 01 y del 04 al último archivo de sql/, en orden. El orden de trabajo con un archivo nuevo es siempre el mismo: se aplica primero en desarrollo, se prueba ahí con los datos de prueba y recién después se aplica en producción. El archivo 03 solo se ejecuta en desarrollo, y con la sesión en hora de Lima (set timezone = 'America/Lima'), porque usa la fecha actual y Supabase trabaja en UTC.
 
