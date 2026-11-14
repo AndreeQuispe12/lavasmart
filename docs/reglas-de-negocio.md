@@ -16,7 +16,12 @@ del proyecto: cuando el código y este documento se contradigan, el equivocado e
 
 - Se identifican por la **placa** del vehículo, no por el nombre.
 - Supuesto del proyecto: un cliente equivale a un vehículo.
-- El nombre y el teléfono son opcionales, solo si el cliente los da.
+- El nombre y el teléfono son opcionales, solo si el cliente los da. El teléfono es un
+  celular y sirve para avisarle que su auto está listo o que surgió un inconveniente; no se
+  usa para promociones sin un consentimiento aparte.
+- Si el auto ya vino, el sistema rellena solo el tipo de vehículo, el nombre y el celular
+  de la visita anterior. Si el celular ya está registrado con otra placa, lo avisa: así se
+  reconoce a un cliente con varios autos sin dejar de identificar al cliente por la placa.
 - La placa es **dato personal** bajo la Ley N.° 29733: usarla como identificador es
   seudonimización, no anonimización.
 

@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.17"
+    PostgrestVersion: "14.18"
   }
   public: {
     Tables: {
@@ -778,6 +778,14 @@ export type Database = {
       }
     }
     Functions: {
+      fn_buscar_cliente: {
+        Args: { p_placa: string }
+        Returns: {
+          nombre: string
+          telefono: string
+          tipo_vehiculo_id: number
+        }[]
+      }
       fn_calcular_liquidacion: {
         Args: { p_fecha: string }
         Returns: {
@@ -806,6 +814,15 @@ export type Database = {
       }
       fn_es_dueno: { Args: never; Returns: boolean }
       fn_es_personal: { Args: never; Returns: boolean }
+      fn_limpiar_placa: { Args: { p_placa: string }; Returns: string }
+      fn_limpiar_telefono: { Args: { p_telefono: string }; Returns: string }
+      fn_placas_del_telefono: {
+        Args: { p_excepto?: string; p_telefono: string }
+        Returns: {
+          nombre: string
+          placa: string
+        }[]
+      }
       fn_registrar_entrega: {
         Args: {
           p_lavado_id: number
@@ -816,9 +833,11 @@ export type Database = {
       }
       fn_registrar_ingreso: {
         Args: {
+          p_nombre?: string
           p_observacion?: string
           p_placa: string
           p_servicios: number[]
+          p_telefono?: string
           p_tipo_vehiculo_id: number
           p_trabajador_id: number
         }

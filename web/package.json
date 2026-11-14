@@ -9,7 +9,7 @@
     "lint": "eslint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "tipos": "npx --yes supabase@2.122.0 gen types typescript --project-id vtqtenkddrhkvavpasyx --schema public > lib/supabase/tipos.ts"
+    "tipos": "npx --yes supabase@2.122.0 gen types typescript --project-id mhygrspxifzakjgwjuut --schema public > lib/supabase/tipos.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

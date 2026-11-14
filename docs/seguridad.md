@@ -35,7 +35,7 @@ Ninguna política concede el permiso de borrado a ningún rol. Las tablas de sal
 
 El sistema identifica a los clientes por la placa del vehículo. Eso reduce la cantidad de datos personales almacenados, pero no los elimina: la placa permite llegar al titular a través del registro vehicular, de modo que es una seudonimización y no una anonimización. El tratamiento queda sujeto a la Ley N.° 29733 de Protección de Datos Personales.
 
-En la práctica esto significa tres cosas. Que el nombre y el teléfono del cliente son opcionales y solo se registran si los entrega voluntariamente. Que el acceso a la información está limitado por rol dentro de la propia base de datos. Y que ningún registro real de clientes puede salir del entorno controlado, lo que incluye de forma muy especial el repositorio de código.
+En la práctica esto significa tres cosas. Que el nombre y el teléfono del cliente son opcionales y solo se registran si los entrega voluntariamente; la pantalla de ingreso dice para qué se pide el celular (avisarle que su auto está listo o de un inconveniente), y usarlo para promociones exigiría un consentimiento aparte. El autocompletado sale solo de lo que el propio lavadero guardó: se evaluó consultar el registro vehicular con la placa para obtener el nombre del titular y se descartó, porque identificaría a una persona sin su consentimiento, el titular no siempre es quien trae el auto y dependería de servicios de terceros. Que el acceso a la información está limitado por rol dentro de la propia base de datos. Y que ningún registro real de clientes puede salir del entorno controlado, lo que incluye de forma muy especial el repositorio de código.
 
 ## Gestión de secretos
 
