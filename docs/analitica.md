@@ -24,6 +24,14 @@ Un agrupamiento K-Means sobre el modelo RFM clasifica a los clientes según hace
 
 Cada fila de salida guarda no solo el segmento asignado sino también los tres valores que llevaron a esa asignación, de modo que el resultado sea explicable y no una etiqueta sin sustento.
 
+Está implementada en `ml/segmentacion.py`. Por cada placa calcula la recencia (días desde su última visita), la frecuencia (cuántas veces vino) y el monetario (cuánto pagó, lo cobrado y no la tarifa), con los lavados entregados hasta el día indicado. Frecuencia y monetario pasan por un logaritmo, porque unos pocos clientes muy frecuentes estirarían la escala, y luego las tres variables se estandarizan para que los soles no pesen más que las visitas al medir distancias. Prueba K-Means con tres, cuatro y cinco grupos y se queda con el de mejor coeficiente de silueta.
+
+Los grupos de K-Means son números sin significado, así que cada uno recibe un nombre de negocio a partir de sus promedios: el de más visitas son los **Frecuentes**; el que hace más de un mes no viene, los **Inactivos**; el que vino casi siempre una sola vez y hace menos de mes y medio, los **Nuevos**; y el resto, los **Ocasionales**.
+
+Con el histórico simulado de desarrollo elige cuatro grupos (silueta 0,505, frente a 0,478 con tres y 0,491 con cinco): 54 frecuentes (9,3 visitas y S/ 185 en promedio, la última hace 5 días), 125 ocasionales (2,7 visitas, S/ 65), 120 nuevos (una visita hace unos 26 días) y 144 inactivos (una visita hace unos 74 días). Para el dueño, cada grupo sugiere una acción distinta: cuidar a los frecuentes, invitar a volver a los nuevos y recuperar a los inactivos.
+
+Se corre desde `ml/` con `.venv\Scripts\python segmentacion.py --hasta AAAA-MM-DD`, y `--seco` para ver los grupos sin escribirlos.
+
 ## Trazabilidad del entrenamiento
 
 Una tercera tabla registra las métricas de cada entrenamiento: error cuadrático medio y error absoluto medio para la regresión, coeficiente de silueta y número de grupos para el agrupamiento, junto con cuántas filas se usaron. Sin esa tabla no habría forma de sostener que un modelo mejoró, ni de explicar por qué un modelo entrenado en el primer mes de operación es menos confiable que el mismo modelo seis meses después.
