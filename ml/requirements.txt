@@ -1,0 +1,8 @@
+# Dependencias del proceso de analítica. Instalar dentro de ml/.venv:
+#   python -m venv .venv
+#   .venv\Scripts\python -m pip install -r requirements.txt
+numpy>=2.3
+pandas>=2.3
+scikit-learn>=1.7
+requests>=2.32
+python-dotenv>=1.1
