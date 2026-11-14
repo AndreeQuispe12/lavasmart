@@ -29,7 +29,11 @@ Las pantallas que son solo del dueño tienen además una guardia en el servidor:
 
 Hay una decisión del dueño que vive en una tabla que el operador sí puede editar: la asistencia, donde el dueño pone el descuento o el día no laborado de un trabajador de sueldo fijo. Ahí las políticas por tabla no alcanzan, porque permiten editar la fila entera. Un disparador revisa la columna que cambia: si es el descuento o el no laborado, exige que quien escribe sea el dueño, y anota quién lo decidió.
 
-Ninguna política concede el permiso de borrado a ningún rol. Las tablas de salida son de solo lectura incluso para el dueño: quien escribe en ellas es el proceso de analítica, que se conecta con la clave de servicio y por tanto no pasa por estas políticas.
+Nadie borra desde la aplicación: a los usuarios autenticados y anónimos se les quitó el permiso de borrar (y el de vaciar tablas) en todas las tablas, de modo que ninguna política puede concederlo aunque diga «para todo». Así estaba descrito desde el principio, pero las políticas del dueño de la forma «para todo» incluían el borrado; lo detectaron las pruebas de sql/pruebas/reglas.sql y lo cerró 17_huecos_de_las_pruebas.sql.
+
+Un disparador corre con los permisos de quien escribe, y por tanto solo ve lo que las políticas le dejan ver a ese usuario. Cuando una regla necesita leer una tabla que el usuario no ve, el disparador corre con los permisos de su dueño (SECURITY DEFINER), como el que impide asignar autos a un lavador con el día cerrado: lee la liquidación para decidir sin mostrársela al operador.
+
+Las tablas de salida son de solo lectura incluso para el dueño: quien escribe en ellas es el proceso de analítica, que se conecta con la clave de servicio y por tanto no pasa por estas políticas.
 
 ## Datos personales
 
