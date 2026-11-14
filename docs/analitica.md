@@ -34,6 +34,14 @@ Ninguno de los dos modelos funciona sin histórico. Una regresión de demanda ne
 
 Por eso la digitalización de los cuadernos físicos no es una tarea administrativa previa sino la primera dependencia técnica del proyecto. Mientras no exista ese histórico, la capa de analítica no tiene nada que entrenar, y cualquier resultado que produjera sería una ilusión estadística.
 
+## El histórico simulado de desarrollo
+
+Para construir y demostrar el proceso antes de tener datos reales, la base de desarrollo (LavaSmart-dev) tiene tres meses de operación simulada, del 13 de agosto al 12 de noviembre de 2026, generados por `ml/simulacion/historico_simulado.sql`. Producción nunca los recibe: el script se niega a correr donde no encuentra los datos de prueba de `03`.
+
+El generador reproduce patrones de un lavadero de Lima en lugar de repartir autos al azar: más demanda el sábado y el domingo, menos en el invierno con garúa y una subida con la primavera, más autos en la quincena, el fin de mes y algunos feriados, y días nublados con menos clientes. Los clientes tienen costumbres (frecuentes con su día y servicio, taxis que lavan por fuera cada pocos días, ocasionales y de una sola visita), las llegadas se concentran de 9 a 12 y de 15 a 17:30, y hay tardanzas, faltas, pagos parciales, incidencias y liquidaciones cerradas y pagadas. Pasa por las mismas restricciones y disparadores que la aplicación, de modo que el porcentaje del destajo y la liquidación salen de las reglas del sistema y no del generador.
+
+Son datos inventados y así se presentan: las placas simuladas empiezan por Z y los celulares por 9000. Los resultados que los modelos obtengan sobre ellos demuestran que el proceso funciona de punta a punta, no que el negocio se comporte así; esa conclusión solo puede salir del histórico real.
+
 ---
 
 _Parte de la documentación técnica de LavaSmart. Si cambias el sistema, cambia también este archivo en el mismo commit._
