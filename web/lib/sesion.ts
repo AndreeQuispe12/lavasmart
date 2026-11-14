@@ -20,12 +20,19 @@ export const obtenerSesion = cache(async (): Promise<Sesion> => {
 
   const { data } = await supabase.auth.getClaims();
   const correo = data?.claims.email ?? "";
+  const id = data?.claims.sub;
+  if (!id) {
+    return { correo, rol: null };
+  }
 
-  // RLS (prf_lectura_propia) solo deja ver la fila propia, así que no hace
-  // falta filtrar por id.
+  // Hay que filtrar por id aunque haya RLS: la política prf_lectura_propia
+  // deja ver la fila propia *o todas si eres dueño*. Sin el filtro, al dueño
+  // le llegaban todos los perfiles y maybeSingle() fallaba en cuanto existía
+  // un segundo usuario, así que la app lo mostraba "sin rol".
   const { data: perfil } = await supabase
     .from("perfil")
     .select("rol")
+    .eq("id", id)
     .maybeSingle();
 
   return { correo, rol: perfil?.rol ?? null };
