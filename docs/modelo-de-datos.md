@@ -26,7 +26,7 @@ Devengar no es pagar. El destajo se calcula todos los días, pero el dinero sale
 
 La liquidación de un día cubre a los dos tipos de trabajador. Al de destajo le corresponde el porcentaje congelado en cada lavado aplicado a lo cobrado; al de sueldo fijo, su sueldo del día si trabajó, menos el descuento que el dueño puso en la asistencia. Un auto cuenta para el día en que se entrega, porque el destajo es sobre lo cobrado y se cobra al entregar. El total a pagar no se guarda: lo calcula la vista de liquidación.
 
-Nada se borra. Los catálogos se desactivan en lugar de eliminarse, las llaves foráneas impiden borrar aquello que ya se usó alguna vez y ninguna política de seguridad concede el permiso de borrado.
+Nada se borra. Los catálogos se desactivan en lugar de eliminarse, las llaves foráneas impiden borrar aquello que ya se usó alguna vez y los usuarios de la aplicación no tienen el permiso de borrar en ninguna tabla. Hasta 17_huecos_de_las_pruebas.sql el dueño sí podía borrar tarifas, parámetros, trabajadores y perfiles, porque sus políticas «para todo» incluían el borrado; lo encontraron las pruebas de sql/pruebas/reglas.sql y se quitó el permiso de raíz.
 
 ### Las dos vistas
 
@@ -57,6 +57,7 @@ Las reglas que siguen no dependen de que la aplicación se acuerde de aplicarlas
 | El precio de cada servicio lo copia la base desde la tarifa vigente | Función fn_registrar_ingreso | Que la aplicación mande un precio distinto al del tarifario. |
 | Un auto no puede estar dos veces en piso, y una placa no cambia de tipo de vehículo | Función fn_registrar_ingreso | Duplicar una visita o cobrar un auto con la tarifa de otro tipo. |
 | Una visita entregada ya no se modifica desde la aplicación, ni por el dueño | Disparador | Bajar después el monto cobrado: la caja cuadraría con un cajón al que le falta dinero y el destajo del lavador cambiaría. Una corrección se hace desde el editor SQL. |
+| Los servicios y precios de una visita entregada tampoco cambian | Disparador | Bajar el precio cobrado o agregar un servicio a un auto ya entregado, que reescribiría la caja y el destajo de un día pasado. Hasta 17_huecos_de_las_pruebas.sql el detalle quedaba abierto aunque la visita estuviera cerrada. |
 | La hora de entrega la pone la base, y el auto y el lavador de una visita no cambian | Disparador | Una entrega con una hora inventada, o un porcentaje de destajo congelado para otro lavador. |
 | Una incidencia ligada a una visita solo puede ser de una visita de ese mismo auto | Disparador | Que un reclamo de un auto termine atribuido al lavador que atendió a otro. |
 | Solo el dueño resuelve una incidencia; lo registrado no cambia y una resuelta queda cerrada | Disparador | Que el operador cierre un reclamo que puede implicar plata, o que se reescriba lo que se reportó. |
@@ -64,7 +65,7 @@ Las reglas que siguen no dependen de que la aplicación se acuerde de aplicarlas
 | No se cobra más que el total facturado | Disparador | Un cobro superior a lo que corresponde. |
 | Una liquidación cerrada es inmutable y no se reabre | Disparador | Modificar el monto de un pago ya acordado. |
 | La liquidación la calcula y la cierra la base, y solo el dueño | Función fn_cerrar_dia | Montos sumados en la aplicación, o un destajo calculado con el porcentaje de hoy en vez del congelado. |
-| Con su día de hoy cerrado, un lavador no recibe ni entrega autos hoy | Disparador | Un cobro que quedaría fuera de toda liquidación. |
+| Con su día de hoy cerrado, un lavador no recibe ni entrega autos hoy, registre quien registre | Disparador | Un cobro que quedaría fuera de toda liquidación. Hasta 17_huecos_de_las_pruebas.sql la regla solo se cumplía cuando registraba el dueño: el disparador corría con los permisos del operador, que no ve la liquidación. |
 | Cada parámetro de configuración tiene un formato válido, y la moneda y la zona horaria no se cambian desde la aplicación | Disparador | Una hora de entrada como «8 am» que dejaría a la pantalla de asistencia sin poder marcar a nadie. |
 | La modalidad y el sueldo de un trabajador solo cambian con todos sus días cerrados | Disparador | Que un día se pague con dos reglas: el destajo de sus autos y además un sueldo fijo. |
 | Un pago registrado no se deshace ni cambia de fecha, y solo lo registra el dueño | Disparador y función fn_entregar_pago | Que un pago desaparezca del registro, o que se pague dos veces el mismo día. |
