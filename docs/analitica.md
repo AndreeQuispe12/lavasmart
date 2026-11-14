@@ -10,6 +10,14 @@ Un modelo de regresión estima cuántos vehículos se esperan cada día de la se
 
 La salida se guarda con su estimación puntual, un intervalo y la versión del modelo que la produjo. Guardar la versión permite comparar el desempeño de modelos sucesivos sin borrar las predicciones anteriores.
 
+Está implementada en `ml/demanda.py`. Lee los autos entregados por día desde `v_caja_dia` y describe cada día con lo que se sabe de antemano: el día de la semana (en columnas de 0 y 1, porque el viernes no está «entre» el jueves y el sábado), si es quincena o fin de mes, si es feriado y la tendencia. Compara tres candidatos como se usarían de verdad: cada una de las últimas cuatro semanas se predice solo con los días anteriores a ella. Los candidatos son una referencia (el promedio de cada día de la semana), una regresión lineal Ridge y un Random Forest; gana el de menor error absoluto medio, se entrena con todo y predice los próximos catorce días. El intervalo sale de los errores de esa prueba: el 80 % de ellos cae dentro del margen.
+
+Se descartó usar como variable el promedio de las semanas anteriores: con pocos meses de datos, el Random Forest mezclaba los viernes con los domingos y predecía de más, y la referencia simple le ganaba. La comparación contra la referencia está para eso: un modelo que no la supera no se usa.
+
+Con el histórico simulado de desarrollo gana Ridge, con 1,8 autos de error por día frente a 2,6 de la referencia (30 % menos), y sus coeficientes se leen directamente: el sábado suma unos 8 autos, un feriado 3,4, la quincena o el fin de mes 1,5, y la tendencia 1,1 por mes. Como el generador se construyó con esos mismos efectos, el resultado demuestra que el proceso los recupera, no que AquaBrillo se comporte así.
+
+Se corre desde `ml/` con `.venv\Scripts\python demanda.py --hasta AAAA-MM-DD` (el último día completo; por defecto, ayer en Lima) y `--seco` para ver los resultados sin escribirlos. Lee `SUPABASE_URL` y la clave secreta de `ml/.env`, que no se versiona; la plantilla es `ml/.env.example`.
+
 ## Segmentación de clientes
 
 Un agrupamiento K-Means sobre el modelo RFM clasifica a los clientes según hace cuánto vinieron por última vez, con qué frecuencia vuelven y cuánto han gastado. El objetivo es distinguir al cliente recurrente del ocasional y del que dejó de venir, para dirigir promociones con algún criterio.
