@@ -249,5 +249,6 @@ Reglas del informe:
 | `docs/desarrollo.md` | Requisitos, variables de entorno, puesta en marcha |
 | `docs/despliegue.md` | Migraciones, Vercel, entornos |
 | `docs/riesgos.md` | Riesgos técnicos y mitigaciones |
+| `docs/pruebas.md` | Pruebas de reglas y permisos, tiempos de respuesta y métricas de los modelos |
 | `docs/reglas-de-negocio.md` | Las reglas del lavadero en palabras del dueño |
 | `sql/01_esquema.sql` | La fuente de verdad del modelo |

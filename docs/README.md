@@ -9,6 +9,7 @@
 - [Entorno de desarrollo y convenciones](desarrollo.md)
 - [Despliegue](despliegue.md)
 - [Riesgos técnicos](riesgos.md)
+- [Pruebas y resultados](pruebas.md) — reglas y permisos, tiempos de respuesta y métricas de los modelos
 - [Diccionario de datos](diccionario-de-datos.docx) — ficha campo por campo de las 15 tablas
 - [Reglas de negocio](reglas-de-negocio.md) — las reglas del lavadero en palabras del dueño
 
@@ -26,7 +27,7 @@ Cubre la arquitectura, el stack, la capa de datos, la seguridad, la capa de anal
 
 El sistema se encuentra en desarrollo. Las secciones que describen componentes todavía no construidos lo indican de forma explícita; todo lo demás describe lo que ya existe y está verificado.
 
-Al momento de esta versión, el modelo de datos está terminado y verificado, y el proyecto en la nube está creado con el esquema aplicado. La aplicación web está publicada en Vercel con inicio de sesión, con el marco de navegación —un menú lateral que muestra a cada rol solo sus secciones— y con la pantalla de personal. Las pantallas de operación diaria todavía no están construidas.
+Al momento de esta versión, el modelo de datos está terminado y verificado con 88 casos de prueba, y la aplicación web está publicada en Vercel con todas las pantallas del menú: inicio, lavados, asistencia, incidencias, personal, liquidación, tarifas y configuración, y el tablero con los dos modelos de analítica. Los modelos están entrenados sobre un histórico simulado; con datos reales falta acumular semanas de operación. Los resultados de las pruebas están en [pruebas.md](pruebas.md).
 
 ### Documentos relacionados
 
