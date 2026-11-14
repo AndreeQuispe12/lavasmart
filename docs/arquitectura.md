@@ -53,7 +53,7 @@ Analítica por lotes y no en línea. Ningún resultado de los modelos se necesit
 | Estilos | Tailwind CSS | Clases de utilidad aplicadas directamente en el marcado. Se eligió porque los mockups del sistema están construidos con ese mismo enfoque, de modo que trasladarlos a código es casi directo. |
 | Alojamiento web | Vercel | Despliegue automático desde GitHub, HTTPS incluido y plan gratuito suficiente para el volumen del negocio. |
 | Base de datos | PostgreSQL 15+ | Motor relacional maduro, con tipos enumerados, restricciones expresivas, disparadores y seguridad a nivel de fila. |
-| Plataforma de datos | Supabase (São Paulo) | PostgreSQL gestionado con autenticación, API y respaldos. La región reduce la latencia frente a alojar en Norteamérica. |
+| Plataforma de datos | Supabase (São Paulo) | PostgreSQL gestionado con autenticación, API y respaldos. La región reduce la latencia frente a alojar en Norteamérica. La aplicación en Vercel corre en la misma región (`gru1`, en `web/vercel.json`) para que cada consulta no cruce el continente. |
 | Analítica | Python con scikit-learn | Ecosistema estándar para regresión y agrupamiento; pandas para la preparación de los datos. |
 | Editor | Visual Studio Code | Con ESLint y Prettier para el estilo del código y GitLens para el historial. |
 | Control de versiones | Git y GitHub | Historial del proyecto y origen de los despliegues automáticos. |

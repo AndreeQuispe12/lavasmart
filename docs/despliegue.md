@@ -12,6 +12,8 @@ Vercel se conecta al repositorio de GitHub y despliega automáticamente. Cada en
 
 Las variables de entorno se configuran en el panel de Vercel y no viajan en el repositorio.
 
+La aplicación corre en la región de São Paulo de Vercel (`gru1`), fijada en `web/vercel.json`, la misma ciudad que la base de datos. Por defecto Vercel la ejecutaba en Washington (`iad1`), y cada consulta cruzaba el continente de ida y vuelta: las pantallas tardaban alrededor de un segundo aunque la base respondía en menos de 20 ms (ver [pruebas.md](pruebas.md)).
+
 ## Proceso de analítica
 
 El entrenamiento se ejecuta una vez por semana. Puede programarse como una tarea del repositorio o ejecutarse a mano mientras el volumen de datos sea pequeño. Se conecta con la clave de servicio, porque necesita escribir en tablas que ningún rol de la aplicación puede modificar.
