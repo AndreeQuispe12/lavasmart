@@ -32,7 +32,7 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 from sklearn.preprocessing import StandardScaler
 
-from comun import LIMA, Supabase, hoy_en_lima
+from comun import LIMA, Supabase, hoy_en_lima, sin_datos
 
 GRUPOS_A_PROBAR = (3, 4, 5)
 SEMILLA = 2026
@@ -46,7 +46,7 @@ def leer_rfm(db: Supabase, hasta: date) -> pd.DataFrame:
         order="id",
     )
     if not filas:
-        raise SystemExit("No hay lavados entregados: no hay clientes que segmentar.")
+        sin_datos("no hay lavados entregados: no hay clientes que segmentar.")
     lavados = pd.DataFrame(filas)
     # El día de la visita se cuenta en hora de Lima. ISO8601 porque unas
     # horas vienen con fracciones de segundo y otras no.
@@ -120,7 +120,7 @@ def main() -> None:
     db = Supabase()
     rfm = leer_rfm(db, args.hasta)
     if len(rfm) < 30:
-        raise SystemExit(f"Solo hay {len(rfm)} clientes: muy pocos para agrupar.")
+        sin_datos(f"solo hay {len(rfm)} clientes; muy pocos para agrupar.")
     datos = preparar(rfm)
 
     # --- 1. Elegir el número de grupos por silueta -------------------------
