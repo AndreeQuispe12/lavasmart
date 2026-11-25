@@ -16,7 +16,13 @@ La aplicación corre en la región de São Paulo de Vercel (`gru1`), fijada en `
 
 ## Proceso de analítica
 
-El entrenamiento se ejecuta una vez por semana. Puede programarse como una tarea del repositorio o ejecutarse a mano mientras el volumen de datos sea pequeño. Se conecta con la clave de servicio, porque necesita escribir en tablas que ningún rol de la aplicación puede modificar.
+El entrenamiento corre solo, una vez por semana, con GitHub Actions (`.github/workflows/entrenamiento.yml`): cada lunes a las 6:00 de Lima instala las dependencias de `ml/`, ejecuta `demanda.py` y después `segmentacion.py` contra producción. Se conecta con la clave de servicio, porque necesita escribir en tablas que ningún rol de la aplicación puede modificar.
+
+Mientras producción no tenga histórico suficiente (ocho semanas de días para la demanda, treinta clientes para la segmentación), cada script lo explica en el resumen de la ejecución y termina sin error: la ejecución queda en verde y el tablero sigue en «pendiente». El día que haya datos, empieza a entrenar sin que nadie toque nada. Un error de verdad, como una clave que falta o una base que no responde, sí deja la ejecución en rojo y GitHub avisa por correo.
+
+También se lanza a mano desde la pestaña Actions del repositorio (Entrenamiento semanal → Run workflow), eligiendo el entorno, la fecha de corte y si solo muestra resultados sin escribir. Para entrenar con el histórico simulado de desarrollo, la fecha de corte es el 12 de noviembre de 2026, el último día del histórico simulado: así salen las métricas publicadas en [pruebas.md](pruebas.md). Con la fecha por defecto (ayer), los días vacíos posteriores contarían como días sin autos, y los pocos lavados cargados a mano el 14 y el 15 para la demostración tampoco representan un día normal: con corte el 15, el error de Ridge sube de 1,8 a 3 autos por día.
+
+**Las claves del flujo.** Viven en dos entornos de GitHub (Settings → Environments), `produccion` y `desarrollo`, cada uno con los secretos `SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY` de su proyecto de Supabase. GitHub no los muestra a nadie una vez guardados, no los entrega a las solicitudes de incorporación que llegan desde copias del repositorio y los oculta en los registros. El flujo solo tiene permiso de lectura sobre el repositorio, y la fecha escrita a mano se valida antes de usarse.
 
 ## Entornos
 

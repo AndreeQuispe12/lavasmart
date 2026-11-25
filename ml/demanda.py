@@ -32,7 +32,7 @@ from sklearn.base import BaseEstimator, RegressorMixin
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import Ridge
 
-from comun import Supabase, hoy_en_lima
+from comun import Supabase, hoy_en_lima, sin_datos
 
 HORIZONTE = 14  # días que se predicen hacia adelante
 SEMANAS_DE_PRUEBA = 4  # semanas finales que se predicen una a una para medir el error
@@ -99,7 +99,7 @@ def leer_demanda(db: Supabase, hasta: date) -> pd.Series:
         order="fecha",
     )
     if not filas:
-        raise SystemExit("v_caja_dia no tiene días: no hay histórico que entrenar.")
+        sin_datos("v_caja_dia no tiene días: no hay histórico que entrenar.")
     datos = pd.DataFrame(filas)
     serie = pd.Series(
         datos["autos_entregados"].astype(float).values,
@@ -137,7 +137,7 @@ def main() -> None:
     db = Supabase()
     serie = leer_demanda(db, args.hasta)
     if len(serie) < 7 * (SEMANAS_DE_PRUEBA + 4):
-        raise SystemExit(f"Solo hay {len(serie)} días: hacen falta al menos {7 * (SEMANAS_DE_PRUEBA + 4)}.")
+        sin_datos(f"solo hay {len(serie)} días; hacen falta al menos {7 * (SEMANAS_DE_PRUEBA + 4)}.")
 
     inicio = serie.index.min()
     x = variables(serie.index, inicio)
