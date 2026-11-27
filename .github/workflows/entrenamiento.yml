@@ -1,0 +1,99 @@
+# Entrenamiento semanal de los dos modelos de analítica (ml/).
+#
+# Cada lunes a las 6:00 de Lima entrena con producción. Mientras producción no
+# tenga histórico suficiente, los scripts lo dicen y terminan sin error: la
+# ejecución queda en verde y el tablero sigue en "pendiente". El día que haya
+# datos, empieza a entrenar solo.
+#
+# También se puede lanzar a mano (Actions -> Entrenamiento semanal -> Run
+# workflow) eligiendo el entorno, la fecha de corte y si escribe o no.
+#
+# La clave secreta de Supabase ignora RLS. Vive solo en los secretos de cada
+# entorno de GitHub (Settings -> Environments): "produccion" y "desarrollo",
+# cada uno con SUPABASE_URL y SUPABASE_SERVICE_ROLE_KEY. Nunca en el código.
+
+name: Entrenamiento semanal
+
+on:
+  schedule:
+    # GitHub usa UTC. Lima es UTC-5 todo el año (sin horario de verano):
+    # 11:00 UTC = 6:00 en Lima. "1" = lunes.
+    - cron: "0 11 * * 1"
+  workflow_dispatch:
+    inputs:
+      entorno:
+        description: "Base de datos contra la que entrena"
+        type: choice
+        options: [produccion, desarrollo]
+        default: produccion
+      hasta:
+        description: "Último día que se usa (AAAA-MM-DD). Vacío = ayer en Lima. En desarrollo: 2026-11-12"
+        type: string
+        required: false
+      seco:
+        description: "Solo mostrar resultados, sin escribir en la base"
+        type: boolean
+        default: false
+
+# El flujo solo lee el repositorio; no necesita escribir nada en GitHub.
+permissions:
+  contents: read
+
+# Dos entrenamientos a la vez contra la misma base no tienen sentido.
+concurrency:
+  group: entrenamiento-${{ inputs.entorno || 'produccion' }}
+  cancel-in-progress: false
+
+jobs:
+  entrenar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # La ejecución programada no tiene inputs: usa producción.
+    environment: ${{ inputs.entorno || 'produccion' }}
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      # Los inputs pasan por variables de entorno, nunca pegados dentro del
+      # comando: así un texto escrito a mano no puede inyectar instrucciones.
+      HASTA: ${{ inputs.hasta }}
+      SECO: ${{ inputs.seco }}
+    defaults:
+      run:
+        working-directory: ml
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: ml/requirements.txt
+
+      - name: Instalar dependencias
+        run: python -m pip install -r requirements.txt
+
+      - name: Preparar argumentos
+        id: args
+        run: |
+          args=""
+          if [ -n "$HASTA" ]; then
+            if ! [[ "$HASTA" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+              echo "::error::La fecha debe tener la forma AAAA-MM-DD: $HASTA"
+              exit 1
+            fi
+            args="--hasta $HASTA"
+          fi
+          if [ "$SECO" = "true" ]; then
+            args="$args --seco"
+          fi
+          echo "valor=$args" >> "$GITHUB_OUTPUT"
+          echo "### Entrenamiento en ${{ inputs.entorno || 'produccion' }}" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Predicción de demanda
+        run: python demanda.py ${{ steps.args.outputs.valor }}
+
+      - name: Segmentación de clientes
+        # Si la demanda falla, la segmentación igual se intenta (son
+        # independientes), pero no si la fecha escrita era inválida.
+        if: ${{ !cancelled() && steps.args.outcome == 'success' }}
+        run: python segmentacion.py ${{ steps.args.outputs.valor }}

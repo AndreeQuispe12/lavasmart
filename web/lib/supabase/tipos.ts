@@ -805,6 +805,18 @@ export type Database = {
           trabajador_id: number
         }[]
       }
+      fn_clientes_alejandose: {
+        Args: { p_limite?: number }
+        Returns: {
+          cada_dias: number
+          dias_sin_venir: number
+          gastado: number
+          nombre: string
+          placa: string
+          telefono: string
+          visitas: number
+        }[]
+      }
       fn_entregar_pago: {
         Args: { p_hasta: string; p_trabajador_id: number }
         Returns: {
@@ -842,6 +854,20 @@ export type Database = {
           p_trabajador_id: number
         }
         Returns: number
+      }
+      fn_segmentos_resumen: {
+        Args: never
+        Returns: {
+          clientes: number
+          gasto_prom: number
+          ingreso: number
+          pct_clientes: number
+          pct_ingreso: number
+          recencia_prom: number
+          recuperar_decimo: number
+          segmento: string
+          visitas_prom: number
+        }[]
       }
       fn_servicios_mas_pedidos: {
         Args: { p_desde: string }

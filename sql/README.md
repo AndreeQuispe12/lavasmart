@@ -18,8 +18,8 @@ Para entenderla no hace falta leerlos en orden. Empieza por el mapa.
 | **Personal y asistencia** | `05`, `06`, `13` | Sin marcar entrada no se le asignan autos; el descuento por tardanza y el «no laboró» los decide solo el dueño; la modalidad y el sueldo cambian solo con los días cerrados. |
 | **Pagos al personal** | `10`, `11` | Lo devengado de cada día, el cierre del día (lo congela) y la entrega del pago (devengar no es pagar). |
 | **Reclamos** | `09` | La incidencia se ancla al auto y, si se sabe, a la visita; solo el dueño la resuelve. |
-| **Configuración** | `12` | Tarifas y reglas de asistencia y destajo con formato válido. |
-| **Tablero y analítica** | `14`, `15` | Resúmenes de solo lectura para el dueño y los resultados de los dos modelos (demanda para todos, segmentación solo para el dueño). |
+| **Configuración** | `12`, `18` | Tarifas, reglas de asistencia y destajo, y autos por lavador, con formato válido. |
+| **Tablero y analítica** | `14`, `15`, `19` | Resúmenes de solo lectura para el dueño y los resultados de los dos modelos (demanda para todos, segmentación solo para el dueño), con cuánto vale cada segmento y qué clientes se están alejando. |
 | **Correcciones de las pruebas** | `17` | Tres huecos que encontraron las pruebas: el precio de un lavado entregado se podía cambiar, el operador podía saltarse el día cerrado y el dueño podía borrar filas. |
 | *No van a producción* | `02`, `03`, `pruebas/` | Tarifas reales (pendiente del dueño), datos de prueba y los casos de prueba. |
 
@@ -80,6 +80,8 @@ desarrollo.
 | `15_analitica_visible.sql` | La segmentación de clientes pasa a ser solo del dueño (contiene placas, que son dato personal); la demanda y las métricas siguen para todo el personal. Vistas `v_demanda_vigente` y `v_segmento_vigente`, que eligen la versión más reciente de cada modelo. |
 | `16_datos_del_cliente.sql` | Nombre y celular opcionales del cliente, validados, en `fn_registrar_ingreso`; `fn_buscar_cliente` y `fn_placas_del_telefono` para autocompletar en la siguiente visita. |
 | `17_huecos_de_las_pruebas.sql` | Cierra lo que encontró `pruebas/reglas.sql`: el detalle de un lavado entregado ya no cambia, la regla del día cerrado se cumple también cuando registra el operador, y nadie puede borrar (se quita `DELETE` y `TRUNCATE` a `anon` y `authenticated`). |
+| `18_planificacion.sql` | Parámetro `autos_por_lavador` en `configuracion` (5 de partida), validado como entero de 1 a 50. Con él, el tablero convierte los autos esperados en lavadores que convocar. |
+| `19_segmentos_accionables.sql` | Funciones de solo lectura para el dueño: `fn_segmentos_resumen` (clientes, ingreso y sus porcentajes, promedios y cuánto volvería si regresara uno de cada diez, por segmento) y `fn_clientes_alejandose` (clientes con tres o más visitas que llevan más del doble de su intervalo habitual sin venir, hasta 60 días, ordenados por lo pagado; al operador no le devuelve filas). |
 | `pruebas/casos.sql` | 13 casos de `01_esquema.sql` (histórico, se corre con `psql`). |
 | `pruebas/reglas.sql` | 88 casos de `05` a `17` y de permisos por rol, ejecutados como un usuario autenticado. Solo en LavaSmart-dev; se deshace solo. Pegar en el editor SQL y ejecutar: devuelve un caso por fila y el resumen. |
 

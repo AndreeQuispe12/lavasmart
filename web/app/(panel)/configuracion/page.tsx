@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { exigirDueno } from "@/lib/sesion";
 import { crearClienteServidor } from "@/lib/supabase/servidor";
-import { FormularioReglas, FormularioTarifas } from "./formularios";
+import {
+  FormularioPlanificacion,
+  FormularioReglas,
+  FormularioTarifas,
+} from "./formularios";
 
 export const metadata: Metadata = {
   title: "Tarifas y configuración · LavaSmart",
@@ -72,6 +76,17 @@ export default async function PaginaConfiguracion() {
               Moneda: {reglas.moneda} · Zona horaria: {reglas.zona_horaria}. No
               se cambian desde aquí.
             </p>
+          </section>
+
+          <section className="flex flex-col gap-3 rounded-lg border border-zinc-500/20 p-4">
+            <h2 className="text-lg font-semibold">Planificación</h2>
+            <p className="text-sm text-zinc-500">
+              Con este número, el tablero convierte los autos que se esperan
+              cada día en cuántos lavadores convocar.
+            </p>
+            <FormularioPlanificacion
+              autosPorLavador={reglas.autos_por_lavador ?? "5"}
+            />
           </section>
         </>
       )}

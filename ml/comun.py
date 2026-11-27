@@ -30,14 +30,33 @@ def hoy_en_lima() -> date:
     return datetime.now(LIMA).date()
 
 
+def sin_datos(motivo: str) -> None:
+    """Termina sin entrenar y sin error cuando aún no hay histórico suficiente.
+
+    Faltar datos no es una falla: es el estado normal de producción hasta
+    que se acumulen semanas de operación real. Salir con código 0 deja la
+    ejecución programada en verde; los tableros siguen diciendo "pendiente".
+    Un error de verdad (sin clave, la base no responde) sí sale con error.
+    """
+    mensaje = f"No se entrena: {motivo}"
+    print(mensaje)
+    # En GitHub Actions, el resumen de la ejecución muestra el motivo.
+    resumen = os.environ.get("GITHUB_STEP_SUMMARY")
+    if resumen:
+        with open(resumen, "a", encoding="utf-8") as archivo:
+            archivo.write(f"- {mensaje}\n")
+    raise SystemExit(0)
+
+
 class Supabase:
     def __init__(self) -> None:
         url = os.environ.get("SUPABASE_URL", "").rstrip("/")
         clave = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
         if not url or not clave:
             raise SystemExit(
-                "Falta SUPABASE_URL o SUPABASE_SERVICE_ROLE_KEY en ml/.env "
-                "(copiar ml/.env.example)."
+                "Falta SUPABASE_URL o SUPABASE_SERVICE_ROLE_KEY: en local van "
+                "en ml/.env (copiar ml/.env.example); en GitHub Actions, en los "
+                "secretos del entorno."
             )
         self.rest = f"{url}/rest/v1"
         self.sesion = requests.Session()

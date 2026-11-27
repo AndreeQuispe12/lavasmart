@@ -38,7 +38,11 @@ Una tercera tabla registra las métricas de cada entrenamiento: error cuadrátic
 
 ## Dónde se ven los resultados
 
-En el tablero del dueño, al final, hay un bloque con los dos modelos: la demanda esperada para cada uno de los próximos siete días, con su intervalo; la cantidad de clientes en cada segmento, y al elegir uno, la lista de esos clientes con los tres valores que explican por qué están ahí; y debajo, cuándo se entrenó cada modelo, con cuántas filas y con qué métricas, para saber cuánto creerle. En la pantalla de inicio, los dos roles ven una sola línea con los autos esperados para hoy.
+En el tablero del dueño, al final, hay un bloque con los dos modelos. Primero, el plan de la semana: para cada uno de los próximos siete días, los autos esperados con su rango probable, **cuántos lavadores convocar** (autos esperados divididos entre los autos que atiende un lavador en un día, redondeado hacia arriba; ese número lo pone el dueño en Tarifas y configuración, `sql/18`) y una etiqueta: día cargado (30 % o más sobre el promedio de la semana, con el consejo de convocar a todos) o día flojo (20 % o más por debajo, buen día para una promoción). Si algún día harían falta más lavadores de los que hay activos, lo avisa. La predicción se traduce en una decisión, no se deja como un número para interpretar.
+
+Después, una tarjeta por segmento con lo mismo para la segmentación: cuántos clientes son, **qué parte del ingreso dejan** (en el histórico simulado, los Frecuentes son el 12 % de los clientes y dejan el 40 %), qué significa el grupo y qué conviene hacer con él; en Inactivos, cuánto volvería si regresara uno de cada diez. Las sumas y porcentajes los calcula la base (`fn_segmentos_resumen`, `sql/19`). Debajo, **«A quién llamar esta semana»**: clientes con costumbre que la están perdiendo (tres o más visitas, más del doble de su intervalo habitual sin venir y menos de 60 días, todavía recuperables), ordenados por lo que han pagado. Se calcula en el momento con los lavados (`fn_clientes_alejandose`), no con el último entrenamiento, y trae nombre y celular, así que solo el dueño recibe filas. Para mandarles promociones hace falta su consentimiento: el celular se pide para identificar al cliente, no para publicidad.
+
+Al elegir una tarjeta se abre la lista de esos clientes con los tres valores que explican por qué están ahí. Al final, cuándo se entrenó cada modelo, con cuántas filas y con qué métricas, para saber cuánto creerle. En la pantalla de inicio, los dos roles ven una sola línea con los autos esperados para hoy.
 
 La segmentación es solo del dueño, y lo hace cumplir la base de datos: es una lista de placas, que son dato personal, y sirve para decisiones comerciales. La demanda no identifica a nadie y le sirve al operador para organizar el día.
 
@@ -50,6 +54,8 @@ Ninguno de los dos modelos funciona sin histórico. Una regresión de demanda ne
 
 Por eso la digitalización de los cuadernos físicos no es una tarea administrativa previa sino la primera dependencia técnica del proyecto. Mientras no exista ese histórico, la capa de analítica no tiene nada que entrenar, y cualquier resultado que produjera sería una ilusión estadística.
 
+Los scripts lo hacen cumplir: con menos de ocho semanas de días o menos de treinta clientes, no entrenan, dicen por qué y terminan sin error. Así el entrenamiento semanal programado (ver [despliegue.md](despliegue.md)) puede correr contra producción desde ahora: hoy no hace nada, y empezará a producir resultados en cuanto se acumule el histórico real.
+
 ## El histórico simulado de desarrollo
 
 Para construir y demostrar el proceso antes de tener datos reales, la base de desarrollo (LavaSmart-dev) tiene tres meses de operación simulada, del 13 de agosto al 12 de noviembre de 2026, generados por `ml/simulacion/historico_simulado.sql`. Producción nunca los recibe: el script se niega a correr donde no encuentra los datos de prueba de `03`.
@@ -57,6 +63,16 @@ Para construir y demostrar el proceso antes de tener datos reales, la base de de
 El generador reproduce patrones de un lavadero de Lima en lugar de repartir autos al azar: más demanda el sábado y el domingo, menos en el invierno con garúa y una subida con la primavera, más autos en la quincena, el fin de mes y algunos feriados, y días nublados con menos clientes. Los clientes tienen costumbres (frecuentes con su día y servicio, taxis que lavan por fuera cada pocos días, ocasionales y de una sola visita), las llegadas se concentran de 9 a 12 y de 15 a 17:30, y hay tardanzas, faltas, pagos parciales, incidencias y liquidaciones cerradas y pagadas. Pasa por las mismas restricciones y disparadores que la aplicación, de modo que el porcentaje del destajo y la liquidación salen de las reglas del sistema y no del generador.
 
 Son datos inventados y así se presentan: las placas simuladas empiezan por Z y los celulares por 9000. Los resultados que los modelos obtengan sobre ellos demuestran que el proceso funciona de punta a punta, no que el negocio se comporte así; esa conclusión solo puede salir del histórico real.
+
+**Días después del histórico.** `ml/simulacion/historico_relleno.sql` llena con operación simulada los días vacíos desde el 13 de noviembre hasta el día en que se corre, para que la demo se vea como un lavadero que sigue trabajando. Salta los días que ya tienen lavados o asistencia (los autos cargados a mano en las demostraciones), sigue la costumbre de cada cliente sacada de sus visitas y, el día en que se corre, solo crea los autos que ya llegaron a esa hora. No borra nada y se puede volver a correr. Las métricas publicadas siguen siendo las del corte del 12 de noviembre: los días cargados a mano caen dentro de las semanas de prueba y no representan un día normal.
+
+**Nombre y celular de los clientes simulados.** `ml/simulacion/contacto_simulado.sql` les pone nombre y celular inventados a las placas Z que no los tenían, para que listas como «A quién llamar esta semana» se vean completas en la demo. Solo llena lo vacío, usa celulares 9001 seguidos del id del cliente (no chocan con los 9000xxxxx de la simulación) y se niega a correr fuera de LavaSmart-dev.
+
+## Los modelos explicados paso a paso
+
+`ml/LavaSmart_modelos_ML.ipynb` recorre los dos modelos con el mismo código de `demanda.py` y `segmentacion.py`, separado en pasos y con un gráfico en cada uno: qué librería usa cada parte, cómo se prueban los candidatos, cómo arma Ridge una predicción sumando el peso de cada variable, cómo K-Means asigna un cliente al centro más cercano y qué decisión le permite tomar al dueño cada modelo. Es material para explicar, no parte del proceso semanal.
+
+Se abre en Colab sin claves ni conexión: trae dentro los lavados del histórico simulado hasta el 12 de noviembre de 2026, con los clientes renumerados y sin placas. Enlace directo: `https://colab.research.google.com/github/AndreeQuispe12/lavasmart/blob/main/ml/LavaSmart_modelos_ML.ipynb` (funciona una vez que el archivo está en la rama principal).
 
 ---
 

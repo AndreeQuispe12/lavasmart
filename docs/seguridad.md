@@ -52,7 +52,7 @@ El repositorio del proyecto es público. Dos credenciales no pueden aparecer nun
 | Clave de servicio | Variable de entorno privada | Únicamente el proceso de analítica. Nunca llega al navegador. |
 | Contraseña de la base | Gestor de contraseñas | Conexiones administrativas puntuales. |
 
-El archivo de variables de entorno se excluye del control de versiones y se acompaña de un archivo de ejemplo que declara los nombres sin los valores. Si una clave de servicio llega a subirse al repositorio, rotarla es obligatorio: borrar el archivo no sirve, porque el historial de Git la conserva.
+El archivo de variables de entorno se excluye del control de versiones y se acompaña de un archivo de ejemplo que declara los nombres sin los valores. La clave de servicio existe en dos lugares, ambos fuera del repositorio: el archivo ml/.env de quien ejecuta la analítica a mano y los secretos de los entornos de GitHub que usa el entrenamiento semanal programado, que GitHub no muestra una vez guardados ni entrega a solicitudes de incorporación desde copias del repositorio. Si una clave de servicio llega a subirse al repositorio, rotarla es obligatorio: borrar el archivo no sirve, porque el historial de Git la conserva.
 
 ---
 
