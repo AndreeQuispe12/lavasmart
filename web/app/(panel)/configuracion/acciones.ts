@@ -119,6 +119,30 @@ export async function guardarReglas(
   };
 }
 
+// Guarda cuántos autos atiende un lavador en un día. Con ese número el
+// tablero pasa de "autos esperados" a "lavadores que convocar". La base
+// valida que sea un entero entre 1 y 50 (sql/18).
+export async function guardarPlanificacion(
+  _anterior: EstadoGuardado,
+  formulario: FormData,
+): Promise<EstadoGuardado> {
+  await exigirDueno();
+
+  const valor = String(formulario.get("autos_por_lavador") ?? "").trim();
+  const supabase = await crearClienteServidor();
+  const { error } = await supabase
+    .from("configuracion")
+    .upsert({ clave: "autos_por_lavador", valor }, { onConflict: "clave" });
+  if (error) return fallar(error.message);
+
+  revalidatePath("/configuracion");
+  revalidatePath("/tablero");
+  return {
+    error: null,
+    mensaje: "Guardado. El plan de la semana del tablero ya usa este número.",
+  };
+}
+
 function fallar(mensaje: string): EstadoGuardado {
   // Las reglas de sql/12 empiezan con su nombre y siguen en español.
   const regla = /^[a-z_]+: (.+)$/.exec(mensaje);

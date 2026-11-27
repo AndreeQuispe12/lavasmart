@@ -396,6 +396,31 @@ begin
                 select count(*)::text from x $c$,
             'rechazo:configuracion_clave_desconocida');
 
+        -- ============ Planificación (sql/18) =============================
+        r := r || pg_temp.probar('Configuración', 'Los autos por lavador no pueden ser 0',
+            $c$ with x as (update configuracion set valor = '0' where clave = 'autos_por_lavador' returning 1)
+                select count(*)::text from x $c$,
+            'rechazo:configuracion_autos_por_lavador_invalido');
+        r := r || pg_temp.probar('Configuración', 'Los autos por lavador van en número',
+            $c$ with x as (update configuracion set valor = 'cinco' where clave = 'autos_por_lavador' returning 1)
+                select count(*)::text from x $c$,
+            'rechazo:configuracion_autos_por_lavador_invalido');
+        r := r || pg_temp.probar('Configuración', 'El dueño ajusta los autos por lavador a 6',
+            $c$ with x as (update configuracion set valor = '6' where clave = 'autos_por_lavador' returning 1)
+                select count(*)::text from x $c$,
+            '1');
+
+        -- ============ Segmentos accionables (sql/19) =====================
+        perform pg_temp.como('operador');
+        r := r || pg_temp.probar('Segmentación', 'Operador: no ve cuánto vale cada segmento',
+            $c$ select count(*)::text from fn_segmentos_resumen() $c$, '0');
+        r := r || pg_temp.probar('Segmentación', 'Operador: no ve la lista de clientes que se alejan (trae celulares)',
+            $c$ select count(*)::text from fn_clientes_alejandose(100) $c$, '0');
+        perform pg_temp.como('anon');
+        r := r || pg_temp.probar('Segmentación', 'Sin sesión: no puede pedir el resumen',
+            $c$ select count(*)::text from fn_segmentos_resumen() $c$, 'rechazo:permission denied');
+        perform pg_temp.como('dueno');
+
         -- ============ Liquidación y pago (sql/10, sql/11) ================
         r := r || pg_temp.probar('Liquidación', 'El dueño sube el destajo puntual a 60 %',
             $c$ with x as (update configuracion set valor = '60' where clave = 'pct_destajo_puntual' returning 1)

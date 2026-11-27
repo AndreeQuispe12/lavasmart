@@ -1,7 +1,12 @@
 "use client";
 
 import { useActionState } from "react";
-import { guardarReglas, guardarTarifas, type EstadoGuardado } from "./acciones";
+import {
+  guardarPlanificacion,
+  guardarReglas,
+  guardarTarifas,
+  type EstadoGuardado,
+} from "./acciones";
 
 type Opcion = { id: number; nombre: string };
 type Tarifa = {
@@ -144,6 +149,45 @@ export function FormularioReglas({
         className="self-start rounded-lg bg-acento px-5 py-3 font-semibold text-white hover:bg-acento-oscuro disabled:opacity-60"
       >
         {guardando ? "Guardando..." : "Guardar reglas"}
+      </button>
+    </form>
+  );
+}
+
+export function FormularioPlanificacion({
+  autosPorLavador,
+}: {
+  autosPorLavador: string;
+}) {
+  const [estado, guardar, guardando] = useActionState(
+    guardarPlanificacion,
+    inicial,
+  );
+
+  return (
+    <form action={guardar} className="flex flex-col gap-4">
+      <label className="flex max-w-xs flex-col gap-1">
+        <span className="text-sm font-medium">
+          Autos que atiende un lavador en un día
+        </span>
+        <input
+          type="number"
+          name="autos_por_lavador"
+          required
+          min={1}
+          max={50}
+          step={1}
+          defaultValue={autosPorLavador}
+          className={`${campo} py-2`}
+        />
+      </label>
+      <Resultado estado={estado} />
+      <button
+        type="submit"
+        disabled={guardando}
+        className="self-start rounded-lg bg-acento px-5 py-3 font-semibold text-white hover:bg-acento-oscuro disabled:opacity-60"
+      >
+        {guardando ? "Guardando..." : "Guardar"}
       </button>
     </form>
   );
